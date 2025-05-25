@@ -5,20 +5,25 @@ const queryClient = new QueryClient();
 import Feed from './screens/feed/Feed';
 import Components from './screens/components/Components'; // Importe o novo componente
 
-const router = createBrowserRouter([
+const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <h1>tela 01</h1>,
+    },
+    {
+      path: '/feed',
+      element: <Feed />,
+    },
+    {
+      path: '/components',
+      element: <Components />,
+    },
+  ],
   {
-    path: '/',
-    element: <h1>tela 01</h1>, 
+    basename: '/dimespace-app',
   },
-  {
-    path: '/feed',
-    element: <Feed />,
-  },
-  {
-    path: '/components', 
-    element: <Components />, 
-  },
-]);
+);
 
 function App() {
   return (
