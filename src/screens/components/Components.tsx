@@ -5,11 +5,17 @@ import { Avatar } from "@/components/ui/avatar";
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"; 
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import LoginModal from '@/components/ui/loginModal';
+import RegisterModal from '@/components/ui/registerModal';
+import CreateCompany from '@/components/ui/createCompany';
+
 
 const Components = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isCompanyOpen, setIsCompanyOpen] = useState(false);
   return (
     <div className="relative min-h-screen">
       <div className="absolute top-4 left-4">
@@ -55,6 +61,28 @@ const Components = () => {
         <Input placeholder="search..." />
         <Button>Click me</Button>
       </div>
+
+      <Button
+        className="fixed bottom-6 right-32 z-50 shadow-lg"
+        variant="secondary"
+        onClick={() => setIsCompanyOpen(true)}
+      >
+        Cadastrar Empresa
+      </Button>
+      
+      <Button
+        className="fixed bottom-6 right-6 z-50 shadow-lg"
+        variant="default"
+        onClick={() => setIsLoginOpen(true)}
+      >
+        Entrar
+      </Button>
+      <LoginModal open={isLoginOpen} onOpenChange={setIsLoginOpen} onRegisterClick={() => {
+        setIsLoginOpen(false);
+        setIsRegisterOpen(true);
+      }} />
+      <RegisterModal open={isRegisterOpen} onOpenChange={setIsRegisterOpen} />
+      <CreateCompany open={isCompanyOpen} onOpenChange={setIsCompanyOpen} />
     </div>
   );
 };
