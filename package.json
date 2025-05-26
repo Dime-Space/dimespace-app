@@ -3,6 +3,7 @@
   "private": false,
   "version": "0.0.1",
   "type": "module",
+  "homepage": "https://dime-space.github.io/dimespace-app",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
