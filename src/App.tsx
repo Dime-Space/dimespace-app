@@ -3,8 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 import Feed from './screens/feed/Feed';
-import Components from './screens/components/Components'; // Importe o novo componente
+import Components from './screens/components/Components'; 
 import UserProfile from './screens/profile/UserProfile';
+  
 const router = createBrowserRouter([
   {
     path: '/',
