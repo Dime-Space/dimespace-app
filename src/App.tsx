@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient();
 import Feed from './screens/feed/Feed';
 import Components from './screens/components/Components'; 
-import LoginPage from './screens/components/LoginPage';
+
 
 const router = createBrowserRouter([
   {
@@ -18,10 +18,6 @@ const router = createBrowserRouter([
   {
     path: '/components', 
     element: <Components />, 
-  },
-  {
-    path: '/loginpage', 
-    element: <LoginPage />, 
   },
 ]);
 
