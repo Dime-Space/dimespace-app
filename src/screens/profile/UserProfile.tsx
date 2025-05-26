@@ -2,6 +2,7 @@ import React from 'react';
 import { ProfileImage } from '@/components/ui/profileimage';
 import SocialLink from '@/components/ui/sociallink';
 import DimeIcons from '@/assets/icons/pageicon';
+import { Button } from '@/components/ui/button';
 
 const UserProfile = () => {
   const urlImage = '/images/yuri.png';
@@ -45,13 +46,11 @@ const UserProfile = () => {
               className="text-gray-300"
               icon={
                 <DimeIcons
-                  fillColor="white"
-                  strokeColor="black"
+                  className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-10 w-10"
                   icon="facebook"
                 />
               }
               url="https://facebook.com"
-              iconSize="w-8 h-8 md:w-12 md:h-12" // Tamanho menor do ícone
               textSize="text-sm md:text-xl" // Texto menor
               iconColor="text-gray-300" // Cor do ícone
             />
@@ -60,27 +59,77 @@ const UserProfile = () => {
               className="text-gray-300"
               icon={
                 <DimeIcons
-                  fillColor="white"
-                  strokeColor="black"
+                  className="fill-black stroke-gray-400  hover:fill-red-500 hover:stroke-red-700 transition-colors h-10 w-10"
                   icon="github"
                 />
               }
               url="https://github.com"
-              iconSize="w-8 h-8 md:w-12 md:h-12" // Tamanho menor do ícone
               textSize="text-sm md:text-xl" // Texto menor
-              iconColor="text-gray-300" // Cor do ícone
             />
           </div>
         </div>
       </div>
       <div className="bg-gray-700 p-6 text-white h-full w-full lg:w-1/4">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-2xl font-bold mb-4">Sobre Mim</h2>
-          <p className="text-gray-300">
-            Desenvolvedor front-end com 5 anos de experiência em React e
-            TypeScript. Apaixonado por criar interfaces intuitivas e
-            performáticas.
-          </p>
+        <div className="flex flex-col space-y-6">
+          {/* Seção de Contato */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">Contato</h2>
+            <div className="space-y-3">
+              <SocialLink
+                label="(11) 99999-9999"
+                className="text-gray-300 hover:text-white"
+                icon={
+                  <DimeIcons
+                    className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-6 w-6"
+                    icon="phone"
+                  />
+                }
+                url="tel:+5511999999999"
+                textSize="text-base"
+              />
+
+              <SocialLink
+                label="yuri@exemplo.com"
+                className="text-gray-300 hover:text-white"
+                icon={
+                  <DimeIcons
+                    className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-6 w-6"
+                    icon="email"
+                  />
+                }
+                url="mailto:yuri@exemplo.com"
+                textSize="text-base"
+              />
+
+              <Button className="w-full text-black bg-gray-300 hover:bg-gray-800 hover:text-white transition-colors mt-2">
+                Enviar Mensagem
+              </Button>
+            </div>
+          </div>
+
+          {/* Seção de Avaliação */}
+          <div>
+            <h2 className="text-2xl font-bold mb-2">Avaliação</h2>
+            <div className="bg-gray-600 p-4 rounded-lg">
+              <div className="flex items-center mb-2">
+                {[...Array(5)].map((_, i) => (
+                  <DimeIcons
+                    key={i}
+                    className={`h-5 w-5 pr-1 ${i < 4 ? 'fill-yellow-400 stroke-yellow-500' : 'fill-gray-400 stroke-gray-500'}`}
+                    icon="star"
+                  />
+                ))}
+                <span className="ml-2 text-yellow-400 font-semibold">4.0</span>
+              </div>
+              <p className="text-gray-300 text-sm">
+                "Yuri é um desenvolvedor excepcional com habilidades técnicas
+                impressionantes e uma grande capacidade de trabalhar em equipe."
+              </p>
+              <p className="text-gray-400 mt-2 text-right text-sm">
+                - Antigo Empregador
+              </p>
+            </div>
+          </div>
         </div>
       </div>
     </div>

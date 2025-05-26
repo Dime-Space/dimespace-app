@@ -15,7 +15,7 @@ const SocialLink: React.FC<SocialLinkProps> = ({
   label,
   url,
   className = '',
-  iconSize = 'w-5 h-5',
+  iconSize,
   textSize = '',
   iconColor = 'text-current',
 }) => {

@@ -7,7 +7,8 @@ type IconName =
   | 'location'
   | 'alert'
   | 'github'
-  | 'facebook'; // Adicione todos os ícones aqui
+  | 'facebook'
+  | 'star'; // Adicione todos os ícones aqui
 
 type DimeIconsProps = {
   icon: IconName;
@@ -15,6 +16,7 @@ type DimeIconsProps = {
   strokeColor?: string;
   size?: number;
   className?: string;
+  strokeWidth?: string | number;
 };
 
 // 2. Mapeamento de paths SVG para cada ícone
@@ -24,8 +26,8 @@ const ICON_DATA: Record<IconName, { path: string; viewBox: string }> = {
     viewBox: '0 0 39 39',
   },
   email: {
-    path: 'M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2...',
-    viewBox: '0 0 24 24',
+    path: 'M36.3676 5.68026C36.3676 3.81188 34.839 2.2832 32.9706 2.2832H5.79412C3.92574 2.2832 2.39706 3.81188 2.39706 5.68026M36.3676 5.68026V26.0626C36.3676 27.931 34.839 29.4597 32.9706 29.4597H5.79412C3.92574 29.4597 2.39706 27.931 2.39706 26.0626V5.68026M36.3676 5.68026L19.3824 17.57L2.39706 5.68026',
+    viewBox: '0 0 39 32',
   },
   location: {
     path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 010-5 2.5 2.5 0 010 5z',
@@ -43,29 +45,39 @@ const ICON_DATA: Record<IconName, { path: string; viewBox: string }> = {
     path: 'M21.95 5.005l-3.306-.004c-3.206 0-5.277 2.124-5.277 5.415v2.495H10.05v4.515h3.317l-.004 9.575h4.641l.004-9.575h3.806l-.003-4.514h-3.803v-2.117c0-1.018.241-1.533 1.566-1.533l2.366-.001.01-4.256z',
     viewBox: '0 0 32 32',
   },
+  star: {
+    path: 'M9.00001 0H7.00001L5.51292 4.57681L0.700554 4.57682L0.0825195 6.47893L3.97581 9.30756L2.48873 13.8843L4.10677 15.0599L8.00002 12.2313L11.8933 15.0599L13.5113 13.8843L12.0242 9.30754L15.9175 6.47892L15.2994 4.57681L10.4871 4.57681L9.00001 0Z',
+    viewBox: '0 0 16 16',
+  },
 };
 
 // 3. Componente principal
 const DimeIcons = ({
   icon,
-  fillColor = 'currentColor',
-  strokeColor = 'currentColor',
-  size = 24,
+  fillColor,
+  strokeColor,
+  size, // Sem valor padrão!
   className = '',
+  strokeWidth = '2',
 }: DimeIconsProps) => {
   return (
     <svg
-      width={size}
-      height={size}
+      // Tamanho: usa size (se existir) OU Tailwind (w-* h-*)
+      width={size} // Se size for undefined, o Tailwind no className controla
+      height={size} // Mesmo comportamento
       viewBox={ICON_DATA[icon].viewBox}
-      fill={fillColor}
-      stroke={strokeColor}
-      className={className}
+      fill={fillColor} // Se undefined, use fill-current no className
+      stroke={strokeColor} // Se undefined, use stroke-current no className
+      className={`
+        ${!fillColor && 'fill-current'} 
+        ${!strokeColor && 'stroke-current'}
+        ${className}
+      `}
       xmlns="http://www.w3.org/2000/svg"
     >
       <path
         d={ICON_DATA[icon].path}
-        strokeWidth="2"
+        strokeWidth={strokeWidth}
         strokeLinecap="round"
         strokeLinejoin="round"
       />
