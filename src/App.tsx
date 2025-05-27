@@ -3,9 +3,10 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 const queryClient = new QueryClient();
 import Feed from './screens/feed/Feed';
-import Components from './screens/components/Components'; 
+import Components from './screens/components/Components';
 import UserProfile from './screens/profile/UserProfile';
-  
+import CompanyProfile from './screens/profile/CompanyProfile';
+
 const router = createBrowserRouter([
   {
     path: '/',
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
   {
     path: '/profile',
     element: <UserProfile />,
+  },
+  {
+    path: '/company-profile',
+    element: <CompanyProfile />,
   },
 ]);
 
