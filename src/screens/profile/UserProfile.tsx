@@ -52,7 +52,6 @@ const UserProfile = () => {
               }
               url="https://facebook.com"
               textSize="text-sm md:text-xl" // Texto menor
-              iconColor="text-gray-300" // Cor do ícone
             />
             <SocialLink
               label="Github"

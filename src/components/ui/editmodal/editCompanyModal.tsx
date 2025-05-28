@@ -1,9 +1,9 @@
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import BaseModal from './baseeditmodal';
 import { useState } from 'react';
 import EditAddressModal from './editAddressModal';
+import BaseEditModal from './baseEditModal';
 
 interface Props {
   open: boolean;
@@ -20,7 +20,11 @@ const EditCompanyModal: React.FC<Props> = ({
   const [isAddressModalOpen, setIsAddressModalOpen] = useState(false);
 
   return (
-    <BaseModal open={open} onOpenChange={onOpenChange} title="Editar Empresa">
+    <BaseEditModal
+      open={open}
+      onOpenChange={onOpenChange}
+      title="Editar Empresa"
+    >
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-4 items-center"
@@ -66,7 +70,7 @@ const EditCompanyModal: React.FC<Props> = ({
           }}
         />
       </div>
-    </BaseModal>
+    </BaseEditModal>
   );
 };
 
