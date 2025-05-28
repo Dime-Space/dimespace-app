@@ -1,15 +1,25 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from "@/components/ui/input";
-import { Avatar } from "@/components/ui/avatar";
-import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Textarea } from "@/components/ui/textarea";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"; 
+import { Input } from '@/components/ui/input';
+import { Avatar } from '@/components/ui/avatar';
+import { Sheet, SheetTrigger, SheetContent } from '@/components/ui/sheet';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import LoginModal from '@/components/ui/loginModal';
+import RegisterModal from '@/components/ui/registerModal';
+import CreateCompany from '@/components/ui/createCompany';
+
+import EditUserModal from '@/components/ui/editmodal/editUserModal';
+import EditCompanyModal from '@/components/ui/editmodal/editCompanyModal';
 
 const Components = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
-
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isRegisterOpen, setIsRegisterOpen] = useState(false);
+  const [isCompanyOpen, setIsCompanyOpen] = useState(false);
+  const [showUserModal, setShowUserModal] = useState(false);
+  const [showCompanyModal, setShowCompanyModal] = useState(false);
   return (
     <div className="relative min-h-screen">
       <div className="absolute top-4 left-4">
@@ -19,9 +29,18 @@ const Components = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600">Quickly create a job.</p>
-            <Button className="mt-4 w-full" variant="default">Create</Button>
+            <Button className="mt-4 w-full" variant="default">
+              Create
+            </Button>
           </CardContent>
         </Card>
+      </div>
+
+      <div className="p-4">
+        <button onClick={() => setShowUserModal(true)}>Editar usuário</button>
+        <button onClick={() => setShowCompanyModal(true)}>
+          Editar empresa
+        </button>
       </div>
 
       <div className="absolute top-4 right-4 flex items-center space-x-2">
@@ -55,6 +74,63 @@ const Components = () => {
         <Input placeholder="search..." />
         <Button>Click me</Button>
       </div>
+
+      <Button
+        className="fixed bottom-6 right-32 z-50 shadow-lg"
+        variant="secondary"
+        onClick={() => setIsCompanyOpen(true)}
+      >
+        Cadastrar Empresa
+      </Button>
+
+      <Button
+        className="fixed bottom-6 right-6 z-50 shadow-lg"
+        variant="default"
+        onClick={() => setIsLoginOpen(true)}
+      >
+        Entrar
+      </Button>
+
+      <Button
+        className="fixed bottom-6 right-80 z-50 shadow-lg"
+        onClick={() => setShowUserModal(true)}
+      >
+        Editar usuário
+      </Button>
+      <Button
+        className="fixed bottom-6 right-120 z-50 shadow-lg"
+        onClick={() => setShowCompanyModal(true)}
+      >
+        Editar empresa
+      </Button>
+
+      <LoginModal
+        open={isLoginOpen}
+        onOpenChange={setIsLoginOpen}
+        onRegisterClick={() => {
+          setIsLoginOpen(false);
+          setIsRegisterOpen(true);
+        }}
+      />
+      <RegisterModal open={isRegisterOpen} onOpenChange={setIsRegisterOpen} />
+      <CreateCompany open={isCompanyOpen} onOpenChange={setIsCompanyOpen} />
+      <EditUserModal
+        open={showUserModal}
+        onOpenChange={setShowUserModal}
+        onSubmit={(data) => {
+          console.log('User data:', data);
+          setShowUserModal(false);
+        }}
+      />
+
+      <EditCompanyModal
+        open={showCompanyModal}
+        onOpenChange={setShowCompanyModal}
+        onSubmit={(data) => {
+          console.log('Company data:', data);
+          setShowCompanyModal(false);
+        }}
+      />
     </div>
   );
 };
