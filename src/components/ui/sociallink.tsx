@@ -1,41 +1,65 @@
 import React from 'react';
+import DimeIcons, { IconName } from '@/assets/icons/pageicon';
 
-interface SocialLinkProps {
-  icon: React.ReactNode;
+export interface SocialLinkProps {
   label: string;
   url: string;
+  icon?:
+    | IconName
+    | React.ReactElement<{ className?: string; size?: number | string }>;
   className?: string;
-  iconSize?: string;
+  iconSize?: number | string;
   textSize?: string;
-  iconColor?: string;
+  iconColor?: {
+    fill?: string;
+    stroke?: string;
+  };
+  hideLabel?: boolean;
+  strokeWidth?: string | number;
 }
 
 const SocialLink: React.FC<SocialLinkProps> = ({
-  icon,
   label,
   url,
+  icon,
   className = '',
-  iconSize,
-  textSize = '',
-  iconColor = 'text-current',
+  iconSize = 24,
+  textSize = 'text-base',
+  iconColor = {
+    fill: 'currentColor',
+    stroke: 'currentColor',
+  },
+  hideLabel = false,
+  strokeWidth = '2',
 }) => {
+  const isDimeIcon = typeof icon === 'string';
+  const sizeClass = typeof iconSize === 'string' ? iconSize : '';
+  const pixelSize = typeof iconSize === 'number' ? iconSize : undefined;
+
   const renderIcon = () => {
-    if (!React.isValidElement(icon)) return icon;
+    if (!icon) return null;
 
-    // Extrai as props existentes de forma type-safe
-    const existingProps = icon.props as React.ComponentProps<'svg'> & {
-      className?: string;
+    if (isDimeIcon) {
+      return (
+        <DimeIcons
+          icon={icon as IconName}
+          size={pixelSize}
+          fillColor={iconColor?.fill}
+          strokeColor={iconColor?.stroke}
+          strokeWidth={strokeWidth}
+          className={sizeClass}
+        />
+      );
+    }
+
+    // Solução type-safe para clonar o elemento
+    const iconProps = {
+      ...icon.props,
+      className: `${icon.props.className || ''} ${sizeClass}`.trim(),
+      size: pixelSize ?? (icon.props as { size?: number | string }).size,
     };
 
-    // Cria novas props com tipagem explícita
-    const newProps: React.ComponentProps<'svg'> = {
-      ...existingProps,
-      className:
-        `${existingProps.className || ''} ${iconColor} ${iconSize}`.trim(),
-      'aria-hidden': true,
-    };
-
-    return React.createElement(icon.type, newProps);
+    return React.cloneElement(icon, iconProps);
   };
 
   return (
@@ -43,12 +67,13 @@ const SocialLink: React.FC<SocialLinkProps> = ({
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className={`flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors ${className}`}
+      className={`flex items-center gap-2 hover:opacity-80 transition-opacity ${className}`}
+      aria-label={label}
     >
-      <span className={`${iconSize} flex items-center justify-center`}>
-        {renderIcon()}
-      </span>
-      {label && <span className={textSize}>{label}</span>}
+      {renderIcon()}
+      {!hideLabel && label && (
+        <span className={`${textSize} ${icon ? 'ml-2' : ''}`}>{label}</span>
+      )}
     </a>
   );
 };

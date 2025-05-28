@@ -1,7 +1,7 @@
 import React from 'react';
 
 // 1. Definindo os tipos
-type IconName =
+export type IconName =
   | 'phone'
   | 'email'
   | 'location'
