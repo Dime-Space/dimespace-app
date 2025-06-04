@@ -120,7 +120,7 @@ const UserProfile = () => {
                 ))}
                 <span className="ml-2 text-yellow-400 font-semibold">4.0</span>
               </div>
-              <p className="text-gray-300 text-sm">
+              <p className="text-gray-300 text-sm md:max-h-12 overflow-y-auto scrollbar-thin">
                 "Yuri é um desenvolvedor excepcional com habilidades técnicas
                 impressionantes e uma grande capacidade de trabalhar em equipe."
               </p>
