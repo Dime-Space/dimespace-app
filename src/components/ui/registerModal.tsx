@@ -3,6 +3,31 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+// Esquema para o passo 1
+const userStepSchema = z.object({
+  nome: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
+  email: z.string().email('Email inválido'),
+  senha: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+  cpf: z
+    .string()
+    .min(11, 'CPF deve ter 11 dígitos')
+    .max(11, 'CPF deve ter 11 dígitos'),
+  telefone: z.string().min(11, 'Telefone inválido'),
+  area: z.string().min(2, 'Área de atuação inválida'),
+  skill: z.string().nonempty('Selecione uma experiência'),
+});
+
+// Esquema para o passo 2
+const addressStepSchema = z.object({
+  cep: z.string().min(8, 'CEP inválido').max(9, 'CEP inválido'),
+  estado: z.string().min(2, 'Estado inválido'),
+  cidade: z.string().min(2, 'Cidade inválida'),
+  rua: z.string().min(2, 'Rua inválida'),
+  numero: z.string().min(1, 'Número inválido'),
+  complemento: z.string().optional(),
+});
 
 interface RegisterModalProps {
   open: boolean;
