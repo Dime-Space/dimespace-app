@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 
 import { formatCPF, formatTelefone, formatCEP } from '@/components/formatter';
+import { validarCPF } from '../cpfchecker';
 
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -16,20 +17,22 @@ const userStepSchema = z.object({
   senha: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
   cpf: z
     .string()
-    .min(11, 'CPF deve ter 11 dígitos')
-    .max(11, 'CPF deve ter 11 dígitos')
-    .regex(/^\d{11}$/, 'CPF deve conter exatamente 11 dígitos numéricos'),
+    .transform((val) => val.replace(/\D/g, '')) // remove tudo que não for dígito
+    .refine((val) => val.length === 11, {
+      message: 'CPF deve conter exatamente 11 dígitos numéricos',
+    })
+    .refine((val) => validarCPF(val), {
+      message: 'CPF inválido',
+    }),
   telefone: z
     .string()
-    .min(11, 'Telefone inválido')
-    .regex(
-      /^\d{10,11}$/,
-      'Telefone deve conter entre 10 e 11 dígitos numéricos',
-    ),
+    .transform((val) => val.replace(/\D/g, '')) // remove () - espaço etc
+    .refine((val) => val.length >= 10 && val.length <= 11, {
+      message: 'Telefone deve conter entre 10 e 11 dígitos numéricos',
+    }),
   area: z.string().min(2, 'Área de atuação inválida'),
   skill: z.string().nonempty('Selecione uma experiência'),
 });
-
 // Esquema para o passo 2
 const addressStepSchema = z.object({
   cep: z
