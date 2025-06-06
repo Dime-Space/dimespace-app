@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useForm } from 'react-hook-form';
 
+import { formatCPF, formatTelefone, formatCEP } from '@/components/formatter';
+
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -15,15 +17,29 @@ const userStepSchema = z.object({
   cpf: z
     .string()
     .min(11, 'CPF deve ter 11 dígitos')
-    .max(11, 'CPF deve ter 11 dígitos'),
-  telefone: z.string().min(11, 'Telefone inválido'),
+    .max(11, 'CPF deve ter 11 dígitos')
+    .regex(/^\d{11}$/, 'CPF deve conter exatamente 11 dígitos numéricos'),
+  telefone: z
+    .string()
+    .min(11, 'Telefone inválido')
+    .regex(
+      /^\d{10,11}$/,
+      'Telefone deve conter entre 10 e 11 dígitos numéricos',
+    ),
   area: z.string().min(2, 'Área de atuação inválida'),
   skill: z.string().nonempty('Selecione uma experiência'),
 });
 
 // Esquema para o passo 2
 const addressStepSchema = z.object({
-  cep: z.string().min(8, 'CEP inválido').max(9, 'CEP inválido'),
+  cep: z
+    .string()
+    .min(8, 'CEP inválido')
+    .max(9, 'CEP inválido')
+    .regex(
+      /^\d{5}-?\d{3}$/,
+      'CEP deve ter 8 dígitos ou estar no formato 00000-000',
+    ),
   estado: z.string().min(2, 'Estado inválido'),
   cidade: z.string().min(2, 'Cidade inválida'),
   rua: z.string().min(2, 'Rua inválida'),
@@ -124,6 +140,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <Input
               placeholder="CPF"
               {...registerStep1('cpf')}
+              onChange={(e) => {
+                e.target.value = formatCPF(e.target.value);
+              }}
               className="w-64"
             />
             {errorsStep1.cpf && (
@@ -134,6 +153,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
               placeholder="Telefone"
               type="tel"
               {...registerStep1('telefone')}
+              onChange={(e) => {
+                e.target.value = formatTelefone(e.target.value);
+              }}
               className="w-64"
             />
             {errorsStep1.telefone && (
@@ -184,6 +206,9 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
             <Input
               placeholder="CEP"
               {...registerStep2('cep')}
+              onChange={(e) => {
+                e.target.value = formatCEP(e.target.value);
+              }}
               className="w-64"
             />
             {errorsStep2.cep && (
