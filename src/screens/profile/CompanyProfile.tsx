@@ -3,6 +3,7 @@ import { ProfileImage } from '@/components/ui/profileimage';
 import SocialLink from '@/components/ui/sociallink';
 import { Button } from '@/components/ui/button';
 import PhoneIcon from '@/assets/icons/IconPhone';
+import FacebookIcon from '@/assets/icons/FacebookIcon';
 
 const CompanyProfile = () => {
   const coverImage = '/images/Corinthians.jpg';
@@ -13,7 +14,7 @@ const CompanyProfile = () => {
     {
       label: 'Facebook',
       url: 'https://facebook.com',
-      icon: <PhoneIcon className="h-10 w-10 text-black" />,
+      icon: <FacebookIcon className="h-10 w-10 text-black" />,
     },
     {
       label: 'Twitter',
