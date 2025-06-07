@@ -3,6 +3,7 @@ import { UserDataForm } from './userDataForm.tsx';
 import { AddressDataForm } from './addressDataForm.tsx';
 import { useState } from 'react';
 import { Step1Data, Step2Data } from './types';
+import { registerUser } from '@/services/user/userServices.tsx';
 
 interface RegisterModalProps {
   open: boolean;
@@ -21,16 +22,16 @@ const RegisterModal: React.FC<RegisterModalProps> = ({
     setStep(2);
   };
 
-  const handleFinish = (addressData: Step2Data) => {
+  const handleFinish = async (addressData: Step2Data) => {
     if (!userData) return;
 
-    const fullData = {
-      ...userData,
-      ...addressData,
-    };
-
-    console.log('Dados completos:', fullData); // Aqui você já tem os dois!
-    onOpenChange(false);
+    try {
+      const result = await registerUser(userData, addressData);
+      console.log('Usuário criado:', result);
+      onOpenChange(false);
+    } catch (error) {
+      console.error('Erro ao enviar dados:', error);
+    }
   };
 
   return (
