@@ -7,7 +7,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import LoginModal from '@/components/ui/loginModal';
-import RegisterModal from '@/components/ui/registerModal';
+import RegisterModal from '@/components/ui/registermodal/registerModal';
 import CreateCompany from '@/components/ui/createCompany';
 
 import EditUserModal from '@/components/ui/editmodal/editUserModal';

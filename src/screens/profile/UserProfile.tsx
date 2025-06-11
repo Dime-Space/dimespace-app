@@ -1,14 +1,17 @@
 import React from 'react';
 import { ProfileImage } from '@/components/ui/profileimage';
 import SocialLink from '@/components/ui/sociallink';
-import DimeIcons from '@/assets/icons/pageicon';
 import { Button } from '@/components/ui/button';
 
+import PhoneIcon from '@/assets/icons/IconPhone';
+import StarIcon from '@/assets/icons/StarIcon';
+import FacebookIcon from '@/assets/icons/FacebookIcon';
+import GithubIcon from '@/assets/icons/GithubIcon';
 const UserProfile = () => {
   const urlImage = '/images/yuri.png';
 
   return (
-    <div className="h-screen w-screen bg-gray-500 flex flex-col">
+    <div className="h-screen w-screen bg-gray-500 overflow-x-hidden flex flex-col">
       <img
         src={urlImage}
         alt="Yuri Alberto"
@@ -45,10 +48,7 @@ const UserProfile = () => {
               label="Facebook"
               className="text-gray-300"
               icon={
-                <DimeIcons
-                  className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-10 w-10"
-                  icon="facebook"
-                />
+                <FacebookIcon className="h-10 w-10 text-black fill-current hover:fill-zinc-500 hover:stroke-zinc-700 transition-colors" />
               }
               url="https://facebook.com"
               textSize="text-sm md:text-xl" // Texto menor
@@ -57,10 +57,7 @@ const UserProfile = () => {
               label="Github"
               className="text-gray-300"
               icon={
-                <DimeIcons
-                  className="fill-black stroke-gray-400  hover:fill-red-500 hover:stroke-red-700 transition-colors h-10 w-10"
-                  icon="github"
-                />
+                <GithubIcon className="h-8 w-8 text-black fill-current hover:fill-zinc-500 hover:stroke-zinc-700 transition-colors" />
               }
               url="https://github.com"
               textSize="text-sm md:text-xl" // Texto menor
@@ -78,10 +75,7 @@ const UserProfile = () => {
                 label="(11) 99999-9999"
                 className="text-gray-300 hover:text-white"
                 icon={
-                  <DimeIcons
-                    className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-6 w-6"
-                    icon="phone"
-                  />
+                  <PhoneIcon className="h-7 w-7 text-black fill-current hover:fill-blue-700 hover:stroke-blue-900 transition-colors" />
                 }
                 url="tel:+5511999999999"
                 textSize="text-base"
@@ -91,10 +85,7 @@ const UserProfile = () => {
                 label="yuri@exemplo.com"
                 className="text-gray-300 hover:text-white"
                 icon={
-                  <DimeIcons
-                    className="fill-black stroke-gray-400 hover:fill-red-500 hover:stroke-red-700 transition-colors h-6 w-6"
-                    icon="email"
-                  />
+                  <PhoneIcon className="h-7 w-7 text-black fill-current hover:fill-blue-500 hover:stroke-blue-700 transition-colors" />
                 }
                 url="mailto:yuri@exemplo.com"
                 textSize="text-base"
@@ -110,17 +101,18 @@ const UserProfile = () => {
           <div>
             <h2 className="text-2xl font-bold mb-2">Avaliação</h2>
             <div className="bg-gray-600 p-4 rounded-lg">
-              <div className="flex items-center mb-2">
+              <div className="flex items-center justify-center align-middle mb-2">
                 {[...Array(5)].map((_, i) => (
-                  <DimeIcons
+                  <StarIcon
                     key={i}
-                    className={`h-5 w-5 pr-1 ${i < 4 ? 'fill-yellow-400 stroke-yellow-500' : 'fill-gray-400 stroke-gray-500'}`}
-                    icon="star"
+                    className={`h-6 w-6 ${i < 4 ? 'text-yellow-400' : 'text-gray-400'} mx-[2px]`}
                   />
                 ))}
-                <span className="ml-2 text-yellow-400 font-semibold">4.0</span>
+                <span className="text-xl ml-2 text-yellow-400 font-semibold">
+                  4.0
+                </span>
               </div>
-              <p className="text-gray-300 text-sm">
+              <p className="text-gray-300 text-sm md:max-h-12 overflow-y-auto scrollbar-thin">
                 "Yuri é um desenvolvedor excepcional com habilidades técnicas
                 impressionantes e uma grande capacidade de trabalhar em equipe."
               </p>
