@@ -16,6 +16,7 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
     register,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<Step1Data>({
     resolver: zodResolver(userStepSchema),
   });
@@ -25,9 +26,9 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
       onSubmit={handleSubmit(onNext)}
       className="flex flex-col gap-4 items-center"
     >
-      <Input placeholder="Nome" {...register('nome')} className="w-64" />
-      {errors.nome && (
-        <p className="text-red-500 text-sm">{errors.nome.message}</p>
+      <Input placeholder="Nome" {...register('name')} className="w-64" />
+      {errors.name && (
+        <p className="text-red-500 text-sm">{errors.name.message}</p>
       )}
 
       <Input
@@ -43,17 +44,20 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
       <Input
         placeholder="Senha"
         type="password"
-        {...register('senha')}
+        {...register('password')}
         className="w-64"
       />
-      {errors.senha && (
-        <p className="text-red-500 text-sm">{errors.senha.message}</p>
+      {errors.password && (
+        <p className="text-red-500 text-sm">{errors.password.message}</p>
       )}
 
       <Input
         placeholder="CPF"
         {...register('cpf')}
-        onChange={(e) => (e.target.value = formatCPF(e.target.value))}
+        onChange={(e) => {
+          const value = formatCPF(e.target.value);
+          setValue('cpf', value);
+        }}
         className="w-64"
       />
       {errors.cpf && (
@@ -62,12 +66,15 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
 
       <Input
         placeholder="Telefone"
-        {...register('telefone')}
-        onChange={(e) => (e.target.value = formatTelefone(e.target.value))}
+        {...register('phone')}
+        onChange={(e) => {
+          const value = formatTelefone(e.target.value);
+          setValue('phone', value);
+        }}
         className="w-64"
       />
-      {errors.telefone && (
-        <p className="text-red-500 text-sm">{errors.telefone.message}</p>
+      {errors.phone && (
+        <p className="text-red-500 text-sm">{errors.phone.message}</p>
       )}
 
       <Input
@@ -77,6 +84,22 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
       />
       {errors.area && (
         <p className="text-red-500 text-sm">{errors.area.message}</p>
+      )}
+
+      <Input
+        placeholder="Biografia"
+        {...register('biography')}
+        className="w-64"
+      />
+
+      <Input
+        placeholder="Data de nascimento"
+        type="date"
+        {...register('birthdate')}
+        className="w-64"
+      />
+      {errors.birthdate && (
+        <p className="text-red-500 text-sm">{errors.birthdate.message}</p>
       )}
 
       <select

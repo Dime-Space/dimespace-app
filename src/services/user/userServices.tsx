@@ -11,16 +11,16 @@ export const registerUser = async (
     ...userData,
     address: {
       cep: addressData.cep,
-      state: addressData.estado,
-      city: addressData.cidade,
-      street: addressData.rua,
-      number: addressData.numero,
-      complement: addressData.complemento,
+      state: addressData.state,
+      city: addressData.city,
+      street: addressData.street,
+      number: addressData.number,
+      complement: addressData.complement,
     },
   };
 
   try {
-    const response = await axios.post(`${API_URL}/users`, payload);
+    const response = await axios.post(`${API_URL}/user`, payload);
     return response.data;
   } catch (error: any) {
     // Você pode melhorar esse tratamento de erro aqui
