@@ -9,7 +9,7 @@ import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import LoginModal from '@/components/ui/loginModal';
 import RegisterModal from '@/components/ui/registermodal/registerModal';
 import CreateCompany from '@/components/ui/createCompany';
-
+import ChatModal from '@/components/ui/chatModal';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
 import EditCompanyModal from '@/components/ui/editmodal/editCompanyModal';
 
@@ -20,6 +20,23 @@ const Components = () => {
   const [isCompanyOpen, setIsCompanyOpen] = useState(false);
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
+
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatMessages, setChatMessages] = useState<
+    { id: number; text: string; sender: 'bot' | 'user' }[]
+  >([
+    { id: 1, text: 'Olá! Como posso ajudar?', sender: 'bot' },
+  ]);
+
+  const handleSendMessage = (message: string) => {
+    setChatMessages((msgs) => [
+      ...msgs,
+      { id: msgs.length + 1, text: message, sender: 'user' as const },
+      { id: msgs.length + 2, text: 'Recebi sua mensagem!', sender: 'bot' as const },
+    ]);
+  };
+
   return (
     <div className="relative min-h-screen">
       <div className="absolute top-4 left-4">
@@ -103,6 +120,23 @@ const Components = () => {
       >
         Editar empresa
       </Button>
+
+      {}
+      <Button
+        className="fixed bottom-6 left-6 z-50 shadow-lg"
+        variant="default"
+        onClick={() => setIsChatOpen(true)}
+      >
+        Abrir Chat
+      </Button>
+
+  
+      <ChatModal
+        open={isChatOpen}
+        onOpenChange={setIsChatOpen}
+        messages={chatMessages}
+        onSendMessage={handleSendMessage}
+      />
 
       <LoginModal
         open={isLoginOpen}
