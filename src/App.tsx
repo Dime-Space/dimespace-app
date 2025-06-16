@@ -7,6 +7,8 @@ import Components from './screens/components/Components';
 import UserProfile from './screens/profile/UserProfile';
 import CompanyProfile from './screens/profile/CompanyProfile';
 import JobOffer from './screens/jobOffer/joboffer';
+import ProtectedRoute from '@/ProtectedRoute'; // ajuste o caminho
+
 
 const router = createBrowserRouter([
   {
@@ -15,7 +17,11 @@ const router = createBrowserRouter([
   },
   {
     path: '/feed',
-    element: <Feed />,
+    element: (
+      <ProtectedRoute>
+        <Feed />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/components',
@@ -23,11 +29,19 @@ const router = createBrowserRouter([
   },
   {
     path: '/profile',
-    element: <UserProfile />,
+    element: (
+      <ProtectedRoute>
+        <UserProfile />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/company-profile',
-    element: <CompanyProfile />,
+    element: (
+      <ProtectedRoute>
+        <CompanyProfile />
+      </ProtectedRoute>
+    ),
   },
   {
     path: '/joboffer',
