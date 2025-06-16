@@ -1,4 +1,7 @@
+import axios from 'axios';
 import { Step1Data, Step2Data } from '@/components/ui/registermodal/types';
+
+const API_URL = 'http://localhost:3001';
 
 export const registerUser = async (
   userData: Step1Data,
@@ -8,25 +11,30 @@ export const registerUser = async (
     ...userData,
     address: {
       cep: addressData.cep,
-      state: addressData.estado,
-      city: addressData.cidade,
-      street: addressData.rua,
-      number: addressData.numero,
-      complement: addressData.complemento,
+      state: addressData.state,
+      city: addressData.city,
+      street: addressData.street,
+      number: addressData.number,
+      complement: addressData.complement,
     },
   };
 
-  const response = await fetch('http://localhost:3001/users', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Erro ao cadastrar: ${response.statusText}`);
+  try {
+    const response = await axios.post(`${API_URL}/user`, payload);
+    return response.data;
+  } catch (error: any) {
+    // Você pode melhorar esse tratamento de erro aqui
+    throw new Error(error.response?.data?.message || 'Erro ao cadastrar');
   }
+};
 
-  return await response.json();
+export const getUserProfile = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/profile`);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(
+      error.response?.data?.message || 'Erro ao buscar perfil do usuário',
+    );
+  }
 };

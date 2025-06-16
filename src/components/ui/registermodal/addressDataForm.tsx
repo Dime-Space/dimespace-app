@@ -1,8 +1,20 @@
+'use client';
+
+import type React from 'react';
+
 import { useForm } from 'react-hook-form';
 import { useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { Step2Data } from './types';
+
+interface Step2Data {
+  cep: string;
+  state: string;
+  city: string;
+  street: string;
+  number: string;
+  complement?: string;
+}
 
 interface AddressDataFormProps {
   onSubmit: (data: Step2Data) => void;
@@ -37,28 +49,34 @@ export const AddressDataForm: React.FC<AddressDataFormProps> = ({
         .then((res) => res.json())
         .then((data) => {
           if (!data.erro) {
-            setValue('estado', data.uf);
-            setValue('cidade', data.localidade);
-            setValue('rua', data.logradouro);
+            setValue('state', data.uf);
+            setValue('city', data.localidade);
+            setValue('street', data.logradouro);
           }
         })
         .catch((err) => console.error('Erro ao buscar CEP:', err));
     }
   }, [cepValue, setValue]);
 
+  const handleFormSubmit = (data: Step2Data) => {
+    console.log('Form data being submitted:', data);
+    onSubmit(data);
+  };
+
   return (
     <form
       className="flex flex-col gap-4 items-center"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(handleFormSubmit)}
     >
       <Input
         placeholder="CEP"
-        {...register('cep', { required: 'CEP obrigatório' })}
-        onChange={(e) => {
-          const formatted = formatCEP(e.target.value);
-          setValue('cep', formatted);
-        }}
-        value={cepValue}
+        {...register('cep', {
+          required: 'CEP obrigatório',
+          onChange: (e) => {
+            const formatted = formatCEP(e.target.value);
+            setValue('cep', formatted);
+          },
+        })}
         className="w-64"
       />
       {errors.cep && (
@@ -67,46 +85,46 @@ export const AddressDataForm: React.FC<AddressDataFormProps> = ({
 
       <Input
         placeholder="Estado"
-        {...register('estado', { required: 'Estado obrigatório' })}
-        className="w-64"
+        {...register('state', { required: 'Estado obrigatório' })}
+        className="w-64 bg-gray-100 cursor-not-allowed select-none"
         readOnly
       />
-      {errors.estado && (
-        <p className="text-red-500 text-sm">{errors.estado.message}</p>
+      {errors.state && (
+        <p className="text-red-500 text-sm">{errors.state.message}</p>
       )}
 
       <Input
         placeholder="Cidade"
-        {...register('cidade', { required: 'Cidade obrigatória' })}
+        {...register('city', { required: 'Cidade obrigatória' })}
         className="w-64 bg-gray-100 cursor-not-allowed select-none"
         readOnly
       />
-      {errors.cidade && (
-        <p className="text-red-500 text-sm">{errors.cidade.message}</p>
+      {errors.city && (
+        <p className="text-red-500 text-sm">{errors.city.message}</p>
       )}
 
       <Input
         placeholder="Rua"
-        {...register('rua', { required: 'Rua obrigatória' })}
+        {...register('street', { required: 'Rua obrigatória' })}
         className="w-64 bg-gray-100 cursor-not-allowed select-none"
         readOnly
       />
-      {errors.rua && (
-        <p className="text-red-500 text-sm">{errors.rua.message}</p>
+      {errors.street && (
+        <p className="text-red-500 text-sm">{errors.street.message}</p>
       )}
 
       <Input
         placeholder="Número"
-        {...register('numero', { required: 'Número obrigatório' })}
-        className="w-64 bg-gray-100 cursor-not-allowed select-none"
+        {...register('number', { required: 'Número obrigatório' })}
+        className="w-64"
       />
-      {errors.numero && (
-        <p className="text-red-500 text-sm">{errors.numero.message}</p>
+      {errors.number && (
+        <p className="text-red-500 text-sm">{errors.number.message}</p>
       )}
 
       <Input
         placeholder="Complemento"
-        {...register('complemento')}
+        {...register('complement')}
         className="w-64"
       />
 
