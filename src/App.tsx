@@ -6,6 +6,7 @@ import Feed from './screens/feed/Feed';
 import Components from './screens/components/Components';
 import UserProfile from './screens/profile/UserProfile';
 import CompanyProfile from './screens/profile/CompanyProfile';
+import JobOffer from './screens/jobOffer/joboffer';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const router = createBrowserRouter([
   {
     path: '/company-profile',
     element: <CompanyProfile />,
+  },
+  {
+    path: '/joboffer',
+    element: <JobOffer />,
   },
 ]);
 
