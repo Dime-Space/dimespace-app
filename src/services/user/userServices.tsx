@@ -1,11 +1,11 @@
 import axios from 'axios';
-import { Step1Data, Step2Data } from '@/components/ui/registermodal/types';
+import { UserStepData, AddressStepData } from '@/types/types';
 
 const API_URL = 'http://localhost:3001';
 
 export const registerUser = async (
-  userData: Step1Data,
-  addressData: Step2Data,
+  userData: UserStepData,
+  addressData: AddressStepData,
 ) => {
   const payload = {
     ...userData,

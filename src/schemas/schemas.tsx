@@ -24,6 +24,13 @@ export const userStepSchema = z.object({
   birthdate: z.string().min(8, 'Data de nascimento é obrigatória'),
 });
 
+export const companyStepSchema = z.object({
+  name: z.string().min(1, 'Nome é obrigatório'),
+  cnpj: z.string().min(1, 'CNPJ é obrigatório'),
+  phone: z.string().min(1, 'Telefone é obrigatório'),
+  useSameAddress: z.boolean().optional(),
+});
+
 export const addressStepSchema = z.object({
   cep: z
     .string()

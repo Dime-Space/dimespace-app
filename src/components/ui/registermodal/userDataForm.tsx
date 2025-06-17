@@ -3,12 +3,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import { userStepSchema } from './schemas';
-import { Step1Data } from './types';
+import { userStepSchema } from '../../../schemas/schemas';
+import { UserStepData } from '../../../types/types';
 import { formatCPF, formatTelefone } from '@/components/formatter';
 
 interface Props {
-  onNext: (data: Step1Data) => void;
+  onNext: (data: UserStepData) => void;
 }
 
 export const UserDataForm: React.FC<Props> = ({ onNext }) => {
@@ -17,7 +17,7 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
     handleSubmit,
     formState: { errors },
     setValue,
-  } = useForm<Step1Data>({
+  } = useForm<UserStepData>({
     resolver: zodResolver(userStepSchema),
   });
 
