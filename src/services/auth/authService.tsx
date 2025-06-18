@@ -1,5 +1,26 @@
 import axios from 'axios';
 
+/**
+ * Serviço de autenticação
+ *
+ * Este arquivo é responsável por realizar comunicações diretas com a API de autenticação,
+ * como login, logout, e buscar os dados do usuário logado (/me). Ele **NÃO deve ser usado
+ * diretamente em componentes React**, pois não lida com estado global nem reatividade.
+ *
+ * Use este serviço apenas dentro de contextos ou hooks customizados.
+ *
+ * ✅ Use para:
+ *   - Fazer requisições como login, logout, buscar /me, etc.
+ *   - Configurar headers de autenticação com axios.
+ *
+ * ❌ NÃO use para:
+ *   - Controlar estado de autenticação.
+ *   - Guardar ou recuperar o usuário logado no React.
+ *
+ * Exemplo correto de uso:
+ *   Dentro do AuthContext, para chamar loginUser(email, senha)
+ */
+
 const API_URL = 'http://localhost:3001';
 const TOKEN_KEY = 'token';
 const USER_KEY = 'user'; // <- chave para guardar o user logado

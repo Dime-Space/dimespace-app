@@ -21,7 +21,7 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onOpenChange,
   onRegisterClick,
 }) => {
-  const { login } = useAuth(); // <<< AQUI
+  const { login } = useAuth();
 
   const {
     register,

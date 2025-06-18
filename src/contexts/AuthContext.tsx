@@ -1,4 +1,25 @@
 // contexts/AuthContext.tsx
+/**
+ * AuthContext.tsx
+ *
+ * Este arquivo cria o contexto de autenticação da aplicação React.
+ * Ele fornece funções como `login`, `logout` e mantém o usuário logado em memória
+ * (além de configurar automaticamente o token do axios).
+ *
+ * É aqui que conectamos a API (via authService) ao React.
+ *
+ * ✅ Use para:
+ *   - Fornecer o estado global do usuário para toda a aplicação.
+ *   - Inicializar o usuário automaticamente ao abrir o app (useEffect).
+ *   - Proteger rotas ou componentes com base em `isAuthenticated`.
+ *
+ * Como usar:
+ *   - Envolver a aplicação com <AuthProvider> no App.tsx.
+ *   - Usar o hook useAuth() dentro de componentes para acessar o contexto.
+ *
+ * ❌ NÃO use diretamente em componentes (use o hook useAuth para isso).
+ */
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import { loginUser, getToken, logoutUser } from '@/services/auth/authService';
 import axios from 'axios';
