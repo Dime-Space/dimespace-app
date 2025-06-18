@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useForm } from 'react-hook-form';
-import { loginUser } from '@/services/auth/authService';
+import { useAuth } from '@/contexts/AuthContext'; // importar hook do contexto
 
 interface LoginModalProps {
   open: boolean;
@@ -21,19 +21,20 @@ const LoginModal: React.FC<LoginModalProps> = ({
   onOpenChange,
   onRegisterClick,
 }) => {
+  const { login } = useAuth(); // <<< AQUI
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormData>();
 
-  const onSubmit = async (data: { email: string; password: string }) => {
+  const onSubmit = async (data: LoginFormData) => {
     try {
-      const result = await loginUser(data.email, data.password);
-      console.log('Usuário autenticado:', result);
-      // redireciona ou atualiza o estado de login
+      await login(data.email, data.password);
+      onOpenChange(false); // fecha modal
     } catch (err: any) {
-      alert(err.message);
+      alert(err.message || 'Erro ao fazer login');
     }
   };
 
