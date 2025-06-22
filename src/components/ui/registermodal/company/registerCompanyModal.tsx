@@ -5,7 +5,7 @@ import { AddressDataForm } from '@/components/ui/registermodal/addressDataForm';
 import { CompanyStepData, AddressStepData } from '@/types/types';
 import { createCompany } from '@/services/company/companyService';
 import { useAuth } from '@/contexts/AuthContext';
-
+import LoginModal from '@/components/ui/loginModal';
 type AddressFull = {
   cep: string;
   state: string;

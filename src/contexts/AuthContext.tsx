@@ -55,9 +55,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchUser = async () => {
     try {
-      const userData = await fetchUserFromAPI();
-      console.log('Dados do /me:', userData);
-      setUser(userData);
+      const response = await fetchUserFromAPI(); // retorna { statusCode, message, data }
+      console.log('Dados do /me:', response);
+      setUser(response.data); // ✅ Agora sim! Só os dados do usuário
     } catch (err) {
       console.error('Erro ao buscar /me', err);
     }
