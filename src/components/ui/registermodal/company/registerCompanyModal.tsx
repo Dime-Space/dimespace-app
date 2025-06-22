@@ -4,6 +4,20 @@ import CompanyDataForm from '@/components/ui/registermodal/companyDataForm';
 import { AddressDataForm } from '@/components/ui/registermodal/addressDataForm';
 import { CompanyStepData, AddressStepData } from '@/types/types';
 import { createCompany } from '@/services/company/companyService';
+import { useAuth } from '@/contexts/AuthContext';
+
+type AddressFull = {
+  cep: string;
+  state: string;
+  city: string;
+  street: string;
+  number: string;
+  complement?: string;
+};
+
+type AddressById = {
+  id: string;
+};
 
 interface Props {
   open: boolean;
@@ -13,16 +27,29 @@ interface Props {
 const CreateCompany: React.FC<Props> = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(1);
   const [companyData, setCompanyData] = useState<CompanyStepData | null>(null);
+  const { user } = useAuth();
 
   const handleFinalSubmit = async (
     company: CompanyStepData,
     address?: AddressStepData,
   ) => {
+    let addressPayload: AddressFull | AddressById | undefined;
+
+    if (company.useSameAddress) {
+      if (user?.address_id) {
+        addressPayload = { id: user.address_id };
+      } else {
+        addressPayload = undefined; // ou lançar erro, dependendo do caso
+      }
+    } else {
+      addressPayload = address;
+    }
+
     const payload = {
       name: company.name,
       cnpj: company.cnpj,
       phone: company.phone,
-      address: address || undefined,
+      address: addressPayload,
     };
 
     try {

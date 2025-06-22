@@ -35,13 +35,11 @@ const setAuthHeader = () => {
   }
 };
 
-// Faz login, salva o token e os dados do usuário (/me)
+// Faz login, salva o token
 export const loginUser = async (email: string, password: string) => {
   const response = await fetch(`${API_URL}/auth/login`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
 
@@ -50,25 +48,17 @@ export const loginUser = async (email: string, password: string) => {
     throw new Error(errorData.message || 'Erro ao fazer login');
   }
 
-  const data = await response.json();
-  localStorage.setItem(TOKEN_KEY, data.token);
+  const result = await response.json();
+
+  // 👉 Corrigido: acessando o token dentro de result.data
+  const token = result.data.access_token;
+
+  console.log('[loginUser] Token recebido da API:', token);
+
+  localStorage.setItem(TOKEN_KEY, token);
   setAuthHeader();
 
-  // Buscar dados do usuário logado
-  const meResponse = await fetch(`${API_URL}/auth/me`, {
-    headers: {
-      Authorization: `Bearer ${data.token}`,
-    },
-  });
-
-  if (!meResponse.ok) {
-    throw new Error('Erro ao buscar dados do usuário');
-  }
-
-  const user = await meResponse.json();
-  localStorage.setItem(USER_KEY, JSON.stringify(user)); // Salva os dados do usuário
-
-  return user;
+  return token;
 };
 
 export const logoutUser = () => {
@@ -88,6 +78,16 @@ export const getCurrentUser = () => {
 
 export const isAuthenticated = () => {
   return !!localStorage.getItem(TOKEN_KEY);
+};
+
+export const fetchUserFromAPI = async () => {
+  const token = getToken(); // pega do localStorage
+  const response = await axios.get(`${API_URL}/user/me`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data;
 };
 
 // Manter o header após refresh

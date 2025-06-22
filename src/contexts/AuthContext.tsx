@@ -21,7 +21,12 @@
  */
 
 import { createContext, useContext, useState, useEffect } from 'react';
-import { loginUser, getToken, logoutUser } from '@/services/auth/authService';
+import {
+  loginUser,
+  getToken,
+  logoutUser,
+  fetchUserFromAPI,
+} from '@/services/auth/authService';
 import axios from 'axios';
 
 interface User {
@@ -50,17 +55,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const fetchUser = async () => {
     try {
-      const res = await axios.get('http://localhost:3001/auth/me');
-      setUser(res.data);
+      const userData = await fetchUserFromAPI();
+      console.log('Dados do /me:', userData);
+      setUser(userData);
     } catch (err) {
       console.error('Erro ao buscar /me', err);
     }
   };
 
   const login = async (email: string, password: string) => {
-    const { token } = await loginUser(email, password); // salva token no localStorage
-    axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-    await fetchUser();
+    const token = await loginUser(email, password);
+    console.log('Token atual:', axios.defaults.headers.common['Authorization']);
+    await fetchUser(); // fetchUser chama /me e seta o estado
   };
 
   const logout = () => {
