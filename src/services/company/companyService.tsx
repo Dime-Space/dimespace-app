@@ -13,15 +13,11 @@ type AddressFull = {
   complement?: string;
 };
 
-type AddressById = {
-  id: string;
-};
-
 export const createCompany = async (companyData: {
   name: string;
   cnpj: string;
   phone: string;
-  address?: AddressFull | AddressById;
+  address?: AddressFull;
 }) => {
   const response = await axios.post(`${API_URL}/company`, companyData);
   return response.data;
