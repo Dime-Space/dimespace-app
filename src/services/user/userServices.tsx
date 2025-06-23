@@ -30,11 +30,16 @@ export const registerUser = async (
 
 export const getUserProfile = async () => {
   try {
-    const response = await axios.get(`${API_URL}/profile`);
+    const response = await axios.get(`${API_URL}/user`);
     return response.data;
   } catch (error: any) {
     throw new Error(
       error.response?.data?.message || 'Erro ao buscar perfil do usuário',
     );
   }
+};
+
+export const getUserById = async (id: number) => {
+  const response = await axios.get(`${API_URL}/user/${id}`);
+  return response.data;
 };

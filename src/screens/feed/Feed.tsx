@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Clock, Settings, FileText, MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+
 import Navbar from '@/components/ui/navbar';
 import ProposalCard from '@/components/ui/feed/proposalcard';
 

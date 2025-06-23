@@ -24,13 +24,10 @@ const router = createBrowserRouter([
     element: <Components />,
   },
   {
-    path: '/profile',
-    element: (
-      <ProtectedRoute>
-        <UserProfile />
-      </ProtectedRoute>
-    ),
+    path: '/profile/:id',
+    element: <UserProfile />,
   },
+
   {
     path: '/company-profile',
     element: (
