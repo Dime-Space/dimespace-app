@@ -7,8 +7,8 @@ import Components from './screens/components/Components';
 import UserProfile from './screens/profile/UserProfile';
 import CompanyProfile from './screens/profile/CompanyProfile';
 import JobOffer from './screens/jobOffer/joboffer';
-import ProtectedRoute from '@/ProtectedRoute'; // ajuste o caminho
-
+import ProtectedRoute from '@/ProtectedRoute';
+import { AuthProvider } from '@/contexts/AuthContext';
 
 const router = createBrowserRouter([
   {
@@ -17,11 +17,7 @@ const router = createBrowserRouter([
   },
   {
     path: '/feed',
-    element: (
-      <ProtectedRoute>
-        <Feed />
-      </ProtectedRoute>
-    ),
+    element: <Feed />,
   },
   {
     path: '/components',
@@ -51,9 +47,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>
+    <AuthProvider>
+      <QueryClientProvider client={queryClient}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </AuthProvider>
   );
 }
 

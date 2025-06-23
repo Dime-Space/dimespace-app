@@ -1,5 +1,3 @@
-'use client';
-
 import { useState } from 'react';
 import { Clock, Settings, FileText, MessageCircle, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -13,12 +11,7 @@ export default function ProposalPlatform() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Navbar Component */}
-      <Navbar
-        balance="R$ 100,00"
-        cartCount={6}
-        userName="Usuário da silva"
-        userEmail="user@gmail.com"
-      />
+      <Navbar />
 
       <div className="flex">
         {/* Left Sidebar */}
