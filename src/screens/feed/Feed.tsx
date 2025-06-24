@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { Clock, Settings, FileText, MessageCircle, X } from 'lucide-react';
+import { Clock, Settings, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import Navbar from '@/components/ui/navbar';
 import ProposalCard from '@/components/ui/feed/proposalcard';
+import ChatModal from '@/components/ui/chatModal';
 
 export default function ProposalPlatform() {
-  const [showChat, setShowChat] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -90,32 +91,15 @@ export default function ProposalPlatform() {
         </main>
       </div>
 
-      {/* Chat Popup */}
-      {showChat && (
-        <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg border">
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              <span className="font-semibold">Empresa</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowChat(false)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="p-4">
-            <p className="text-sm text-gray-600 mb-3">
-              Quanto a tal assunto e se nós...
-            </p>
-            <Button size="sm" className="bg-gray-800 hover:bg-gray-900">
-              Responder
-            </Button>
-          </div>
-        </div>
-      )}
+      <Button
+        className="fixed bottom-6 right-6 z-50 shadow-lg"
+        variant="default"
+        onClick={() => setIsChatOpen(true)}
+      >
+        Abrir Chat
+      </Button>
+
+      <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>
   );
 }

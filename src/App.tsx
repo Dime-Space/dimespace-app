@@ -1,7 +1,6 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
-const queryClient = new QueryClient();
 import Feed from './screens/feed/Feed';
 import Components from './screens/components/Components';
 import UserProfile from './screens/profile/UserProfile';
@@ -44,6 +43,8 @@ const router = createBrowserRouter([
     element: <JobOffer />,
   },
 ]);
+
+const queryClient = new QueryClient();
 
 function App() {
   return (
