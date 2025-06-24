@@ -26,3 +26,10 @@ export const createCompany = async (companyData: {
   const response = await axios.post(`${API_URL}/company`, companyData);
   return response.data;
 };
+
+export const getCompanyById = async (id: number) => {
+  const response = await axios.get(`${API_URL}/company/${id}`);
+  console.log('🏢 Dados da empresa recebidos:', response.data.data);
+
+  return response.data.data;
+};

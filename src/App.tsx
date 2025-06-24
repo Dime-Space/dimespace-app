@@ -13,10 +13,6 @@ import { AuthProvider } from '@/contexts/AuthContext';
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <h1>tela 01</h1>,
-  },
-  {
-    path: '/feed',
     element: <Feed />,
   },
   {
@@ -29,7 +25,7 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/company-profile',
+    path: '/company-profile/:id',
     element: (
       <ProtectedRoute>
         <CompanyProfile />
