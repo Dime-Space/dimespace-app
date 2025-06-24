@@ -8,15 +8,16 @@ import CompanyProfile from './screens/profile/CompanyProfile';
 import JobOffer from './screens/jobOffer/joboffer';
 import ProtectedRoute from '@/ProtectedRoute';
 import { AuthProvider } from '@/contexts/AuthContext';
+import { Navigate } from 'react-router-dom';
 
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <h1>tela 01</h1>,
+    element: <Feed />,
   },
   {
     path: '/feed',
-    element: <Feed />,
+    element: <Navigate to="/" replace />,
   },
   {
     path: '/components',

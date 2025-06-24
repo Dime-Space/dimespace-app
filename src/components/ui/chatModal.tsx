@@ -4,40 +4,20 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
 import { useQuery } from '@tanstack/react-query';
-import { Chat, getChatHistory, listChats } from '@/services/chat/chatService';
-
-interface ChatUser {
-  id: number;
-  nome: string;
-  avatar: string;
-  lastMessage: string;
-}
+import {
+  Chat,
+  getChatHistory,
+  listChats,
+  Message,
+} from '@/services/chat/chatService';
+import { useAuth } from '@/contexts/hooks/useAuth';
+import { useChatSocket } from '@/contexts/hooks/useChatWs';
+import { LucideArrowRight, User } from 'lucide-react';
 
 interface ChatModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const testUsers: ChatUser[] = [
-  {
-    id: 1,
-    nome: 'Microsoft',
-    avatar: '/src/assets/images/microsoft.jpeg',
-    lastMessage: 'Bem vindo a microsft...',
-  },
-  {
-    id: 2,
-    nome: 'Google',
-    avatar: '/src/assets/images/google.png',
-    lastMessage: 'bem vindo ao google...',
-  },
-  {
-    id: 3,
-    nome: 'Nvidia',
-    avatar: '/src/assets/images/nvidia.jpg',
-    lastMessage: 'bem vindo a nvidia  ...',
-  },
-];
 
 type ChatFormValues = {
   message: string;
@@ -46,6 +26,7 @@ type ChatFormValues = {
 const ChatModal: React.FC<ChatModalProps> = ({ open, onOpenChange }) => {
   const [selectedChat, setSelectedChat] = useState<Chat | null>(null);
   const [search, setSearch] = useState('');
+  const { user } = useAuth();
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const { data: chats } = useQuery({
@@ -68,16 +49,41 @@ const ChatModal: React.FC<ChatModalProps> = ({ open, onOpenChange }) => {
 
   const { register, handleSubmit, reset } = useForm<ChatFormValues>();
 
-  const messages = [];
-  const onSendMessage = (message: string) => {};
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    if (!chatHistory) return;
+    setMessages(
+      chatHistory.messages.sort(
+        (a, b) =>
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
+      ),
+    );
+  }, [chatHistory]);
+
+  const { sendMessage } = useChatSocket({
+    chatId: String(selectedChat?.id || -1),
+    onMessage: (message: Message) => {
+      if (message && message.content) {
+        setMessages((prev) => {
+          const newMessages = [...prev, message];
+          return newMessages.sort(
+            (a, b) =>
+              new Date(a.created_at).getTime() -
+              new Date(b.created_at).getTime(),
+          );
+        });
+      }
+    },
+  });
+
+  const onSendMessage = (message: string) => {
+    sendMessage(message);
+  };
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, open, selectedChat]);
-
-  const filteredUsers = testUsers.filter((user) =>
-    user.nome.toLowerCase().includes(search.toLowerCase()),
-  );
 
   const handleSend = (data: ChatFormValues) => {
     if (data.message.trim()) {
@@ -118,11 +124,9 @@ const ChatModal: React.FC<ChatModalProps> = ({ open, onOpenChange }) => {
                   onClick={() => setSelectedChat(chat)}
                   style={{ outline: 'none' }}
                 >
-                  <img
-                    // src={chat.avatar}
-                    // alt={chat.nome}
-                    className="w-12 h-12 rounded-full object-cover mr-4 bg-gray-200"
-                  />
+                  <div className="w-12 h-12 rounded-full object-cover mr-4 bg-gray-100 items-center justify-center flex ">
+                    <User />
+                  </div>
                   <div className="flex-1 text-left">
                     <div className="flex items-center justify-between">
                       <span className="font-semibold text-black text-base">
@@ -147,34 +151,50 @@ const ChatModal: React.FC<ChatModalProps> = ({ open, onOpenChange }) => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="mr-2"
+                className="mr-2 cursor-pointer"
                 onClick={() => setSelectedChat(null)}
               >
                 <span className="text-2xl text-black">{'←'}</span>
               </Button>
-              <img
-                // src={selectedChat.avatar}
-                // alt={selectedChat.nome}
-                className="w-12 h-12 rounded-full object-cover bg-gray-200"
-              />
+              <div className="w-12 h-12 rounded-full object-cover mr-4 bg-gray-100 items-center justify-center flex ">
+                <User />
+              </div>
               <div>
-                <div className="font-semibold text-black">
+                <div className="font-semibold text-black pr-4">
                   {selectedChat.name}
                 </div>
               </div>
             </div>
             <div className="flex-1 overflow-y-auto px-4 py-2 flex flex-col bg-white">
-              {chatHistory?.messages.map((msg) => (
-                <div
-                  key={msg.id}
-                  className={`p-2 rounded-lg max-w-xs mb-2 ${
-                    msg.user
-                      ? 'bg-blue-500 text-white self-end ml-auto'
-                      : 'bg-gray-200 text-gray-900 self-start mr-auto'
-                  }`}
-                >
-                  {msg.content}
-                </div>
+              {messages.map((msg) => (
+                <React.Fragment key={msg.id}>
+                  <div
+                    className={`p-2 rounded-lg max-w-xs break-words ${
+                      user && Number(msg.user.id) === Number(user.id)
+                        ? 'bg-blue-500 text-white self-end ml-auto'
+                        : 'bg-gray-200 text-gray-900 self-start mr-auto'
+                    }`}
+                  >
+                    {msg.content}
+                  </div>
+                  <label
+                    className={`rounded-lg max-w-xs break-words mb-4 text-[10px] mt-1 ${
+                      user && Number(msg.user.id) === Number(user.id)
+                        ? ' text-gray-800 self-end ml-auto'
+                        : ' text-gray-800 self-start mr-auto'
+                    }`}
+                  >
+                    {new Date(
+                      new Date(msg.created_at).getTime() - 3 * 60 * 60 * 1000,
+                    ).toLocaleDateString('pt-BR')}{' '}
+                    {new Date(
+                      new Date(msg.created_at).getTime() - 3 * 60 * 60 * 1000,
+                    ).toLocaleTimeString('pt-BR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </label>
+                </React.Fragment>
               ))}
               <div ref={messagesEndRef} />
             </div>
@@ -190,10 +210,12 @@ const ChatModal: React.FC<ChatModalProps> = ({ open, onOpenChange }) => {
               />
               <Button
                 type="submit"
-                className="rounded-full w-10 h-10 p-0 flex items-center justify-center bg-[#eee] text-black"
+                className="cursor-pointer rounded-full w-10 h-10 p-0 flex items-center justify-center bg-[#eee] text-black"
                 variant="ghost"
               >
-                <span className="text-xl">{'→'}</span>
+                <span className="text-xl">
+                  <LucideArrowRight />
+                </span>
               </Button>
             </form>
           </div>
