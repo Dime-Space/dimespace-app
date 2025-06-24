@@ -27,7 +27,7 @@ export default function Navbar() {
   };
 
   return (
-    <header className="bg-gray-800 text-white px-4 sm:px-6 py-3 w-full">
+    <header className="bg-gray-800 text-white px-4 sm:px-6 py-3 w-full fixed top-0 left-0 z-40 shadow">
       <div className="flex items-center justify-between w-full min-w-0">
         <div className="text-2xl font-bold flex-shrink-0">D</div>
 
@@ -44,10 +44,15 @@ export default function Navbar() {
 
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           {/* Botão único para perfil/login */}
+          {user && (
+            <p className="text-sm text-white">
+              Olá, <b>{user.name}</b>
+            </p>
+          )}
           <button
             onClick={handleUserIconClick}
             aria-label="Abrir perfil ou login"
-            className="w-7 h-7 sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors flex-shrink-0"
+            className=" cursor-pointer sm:w-8 sm:h-8 bg-gray-600 rounded-full flex items-center justify-center hover:bg-gray-500 transition-colors flex-shrink-0"
           >
             <User className="w-4 h-4 sm:w-5 sm:h-5" />
           </button>
