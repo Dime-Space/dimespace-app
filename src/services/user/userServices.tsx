@@ -41,5 +41,6 @@ export const getUserProfile = async () => {
 
 export const getUserById = async (id: number) => {
   const response = await axios.get(`${API_URL}/user/${id}`);
-  return response.data;
+  console.log('Response from getUserById:', response.data);
+  return response.data.data;
 };
