@@ -34,7 +34,7 @@ export default function UserProfileSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 ml-8">
+        <div className=" ml-8">
           <div className="border-b pb-4 mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">

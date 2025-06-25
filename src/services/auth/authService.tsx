@@ -21,7 +21,7 @@ import axios from 'axios';
  *   Dentro do AuthContext, para chamar loginUser(email, senha)
  */
 
-const API_URL = 'http://localhost:3001';
+export const API_URL = 'http://localhost:3001';
 const TOKEN_KEY = 'token';
 const USER_KEY = 'user'; // <- chave para guardar o user logado
 

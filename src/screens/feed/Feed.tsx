@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { Clock, Settings, FileText, MessageCircle, X } from 'lucide-react';
+import { Clock, Settings, FileText, MessageCircleIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 import Navbar from '@/components/ui/navbar';
 import ProposalCard from '@/components/ui/feed/proposalcard';
+import ChatModal from '@/components/ui/chatModal';
+import { useAuth } from '@/contexts/hooks/useAuth';
 
 export default function ProposalPlatform() {
-  const [showChat, setShowChat] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -16,7 +19,7 @@ export default function ProposalPlatform() {
 
       <div className="flex">
         {/* Left Sidebar */}
-        <aside className="relative w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 transition-all duration-300">
+        <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 transition-all duration-300 z-30 overflow-y-auto">
           <nav className="space-y-2">
             <div className="flex items-center gap-3 justify-center md:justify-start p-2 md:p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer group">
               <Clock className="w-5 h-5 flex-shrink-0" />
@@ -55,7 +58,7 @@ export default function ProposalPlatform() {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 mt-16">
           <div className="max-w-4xl mx-auto space-y-6">
             {/* First Proposal - With Image */}
             <ProposalCard
@@ -91,32 +94,17 @@ export default function ProposalPlatform() {
         </main>
       </div>
 
-      {/* Chat Popup */}
-      {showChat && (
-        <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg border">
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              <span className="font-semibold">Empresa</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowChat(false)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="p-4">
-            <p className="text-sm text-gray-600 mb-3">
-              Quanto a tal assunto e se nós...
-            </p>
-            <Button size="sm" className="bg-gray-800 hover:bg-gray-900">
-              Responder
-            </Button>
-          </div>
-        </div>
+      {isAuthenticated && (
+        <Button
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg cursor-pointer "
+          variant="default"
+          onClick={() => setIsChatOpen(true)}
+        >
+          <MessageCircleIcon className="w-6 h-6" />
+        </Button>
       )}
+
+      <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>
   );
 }

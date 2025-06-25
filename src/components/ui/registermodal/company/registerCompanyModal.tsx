@@ -15,10 +15,6 @@ type AddressFull = {
   complement?: string;
 };
 
-type AddressById = {
-  id: string;
-};
-
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -33,29 +29,24 @@ const CreateCompany: React.FC<Props> = ({ open, onOpenChange }) => {
     company: CompanyStepData,
     address?: AddressStepData,
   ) => {
-    let addressPayload: AddressFull | AddressById | undefined;
-
-    if (company.useSameAddress) {
-      if (user?.address_id) {
-        addressPayload = { id: user.address_id };
-      } else {
-        addressPayload = undefined; // ou lançar erro, dependendo do caso
-      }
-    } else {
-      addressPayload = address;
-    }
-
-    const payload = {
+    const payload: {
+      name: string;
+      cnpj: string;
+      phone: string;
+      address?: AddressFull; // Sem o AddressById
+    } = {
       name: company.name,
       cnpj: company.cnpj,
       phone: company.phone,
-      address: addressPayload,
     };
 
+    if (!company.useSameAddress && address) {
+      payload.address = address;
+    }
     try {
       const response = await createCompany(payload);
       console.log('Empresa criada:', response);
-      onOpenChange(false); // agora funciona
+      onOpenChange(false); // fecha o modal, tudo certo
     } catch (error) {
       console.error('Erro ao criar empresa:', error);
     }
