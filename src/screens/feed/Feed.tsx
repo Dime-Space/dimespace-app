@@ -11,6 +11,7 @@ import ProposalCard from '@/components/ui/feed/proposalcard';
 import ChatModal from '@/components/ui/chatModal';
 import { useAuth } from '@/contexts/hooks/useAuth';
 import { getProposals } from '@/services/proposals/proposalServices';
+import ProposalCardSkeleton from '@/components/ui/feed/proposalskeleton';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -50,7 +51,11 @@ export default function ProposalPlatform() {
         <main className="flex-1 p-6 mt-16">
           <div className="max-w-4xl mx-auto space-y-6">
             {isLoading && (
-              <p className="text-gray-600">Carregando propostas...</p>
+              <>
+                {[...Array(3)].map((_, idx) => (
+                  <ProposalCardSkeleton key={idx} />
+                ))}
+              </>
             )}
             {isError && (
               <p className="text-red-500">Erro ao carregar propostas.</p>
