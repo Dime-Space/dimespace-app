@@ -20,6 +20,8 @@
  * ❌ NÃO use diretamente em componentes (use o hook useAuth para isso).
  */
 
+import { toast } from 'sonner';
+
 import { createContext, useContext, useState, useEffect } from 'react';
 import {
   loginUser,
@@ -64,14 +66,24 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const login = async (email: string, password: string) => {
-    const token = await loginUser(email, password);
-    console.log('Token atual:', axios.defaults.headers.common['Authorization']);
-    await fetchUser(); // fetchUser chama /me e seta o estado
+    try {
+      const token = await loginUser(email, password);
+      console.log(
+        'Token atual:',
+        axios.defaults.headers.common['Authorization'],
+      );
+      await fetchUser();
+      toast.success('Login realizado com sucesso!');
+    } catch (err) {
+      toast.error('Erro ao fazer login');
+      throw err; // importante propagar o erro se necessário
+    }
   };
 
   const logout = () => {
     logoutUser();
     setUser(null);
+    toast.success('Logout realizado com sucesso!');
   };
 
   useEffect(() => {

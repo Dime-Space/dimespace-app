@@ -12,10 +12,22 @@ import ChatModal from '@/components/ui/chatModal';
 import { useAuth } from '@/contexts/hooks/useAuth';
 import { getProposals } from '@/services/proposals/proposalServices';
 import ProposalCardSkeleton from '@/components/ui/feed/proposalskeleton';
+import { Proposal } from '@/types/types';
+import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { user, isAuthenticated } = useAuth();
+
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openProposalDetails = (proposal: Proposal) => {
+    setSelectedProposal(proposal);
+    setIsModalOpen(true);
+  };
 
   const {
     data: proposals,
@@ -48,7 +60,7 @@ export default function ProposalPlatform() {
           </div>
         </aside>
 
-        <main className="flex-1 p-6 mt-16">
+        <main className="flex-1 p-6 mt-16 ml-16 md:ml-64">
           <div className="max-w-4xl mx-auto space-y-6">
             {isLoading && (
               <>
@@ -78,7 +90,7 @@ export default function ProposalPlatform() {
                 skills={proposal.skill_requested}
                 status={proposal.status}
                 finalDate={proposal.final_date}
-                // imageUrl={'/placeholder.svg'} // Opcional: adicione se quiser mostrar imagem
+                onDetailsClick={() => openProposalDetails(proposal)}
               />
             ))}
           </div>
@@ -95,6 +107,24 @@ export default function ProposalPlatform() {
         </Button>
       )}
 
+      {selectedProposal && (
+        <ProposalDetailsModal
+          open={isModalOpen}
+          onOpenChange={setIsModalOpen}
+          proposal={selectedProposal}
+          onContact={() => {
+            if (!selectedProposal) return;
+            console.log('Candidatura iniciada:', {
+              userId: user?.id,
+              userName: user?.name,
+              companyId: selectedProposal.company.id,
+              companyName: selectedProposal.company.name,
+              proposalId: selectedProposal.id,
+              proposalTitle: selectedProposal.title,
+            });
+          }}
+        />
+      )}
       <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>
   );

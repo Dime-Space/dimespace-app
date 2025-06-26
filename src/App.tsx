@@ -7,6 +7,8 @@ import UserProfile from './screens/profile/UserProfile';
 import CompanyProfile from './screens/profile/CompanyProfile';
 import JobOffer from './screens/jobOffer/joboffer';
 import ProtectedRoute from '@/ProtectedRoute';
+
+import { Toaster } from 'sonner';
 import { AuthProvider } from '@/contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
 
@@ -46,11 +48,14 @@ const queryClient = new QueryClient();
 
 function App() {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
-      </QueryClientProvider>
-    </AuthProvider>
+    <>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <RouterProvider router={router} />
+        </QueryClientProvider>
+      </AuthProvider>
+      <Toaster richColors position="top-center" />
+    </>
   );
 }
 

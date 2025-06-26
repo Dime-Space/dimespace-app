@@ -15,6 +15,7 @@ interface ProposalCardProps {
   finalDate?: string; // ISO string
   imageUrl?: string;
   imageAlt?: string;
+  onDetailsClick?: () => void;
 }
 
 export default function ProposalCard({
@@ -28,6 +29,7 @@ export default function ProposalCard({
   finalDate,
   imageUrl,
   imageAlt = 'Project image',
+  onDetailsClick,
 }: ProposalCardProps) {
   return (
     <Card className="overflow-hidden">
@@ -55,8 +57,8 @@ export default function ProposalCard({
             <Badge className="bg-green-600 hover:bg-green-700 text-white px-4 py-1">
               {price}
             </Badge>
-            <Button variant="outline" size="sm">
-              Tenho Interesse
+            <Button variant="outline" size="sm" onClick={onDetailsClick}>
+              Detalhes
             </Button>
           </div>
         </div>
