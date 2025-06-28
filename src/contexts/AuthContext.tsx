@@ -39,8 +39,16 @@ interface User {
   // outros campos
 }
 
+interface Company {
+  id: string;
+  name: string;
+  cnpj: string;
+  phone: string;
+}
+
 interface AuthContextType {
   user: User | null;
+  company: Company | null; // opcional, se você quiser armazenar a empresa do usuário
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
   isAuthenticated: boolean;
@@ -54,12 +62,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [company, setCompany] = useState<Company | null>(null);
 
   const fetchUser = async () => {
     try {
       const response = await fetchUserFromAPI(); // retorna { statusCode, message, data }
       console.log('Dados do /me:', response);
-      setUser(response.data); // ✅ Agora sim! Só os dados do usuário
+      setUser(response.data); // assume que data contém o usuário
+      if (response.companyOwned != null) {
+        setCompany(response.companyOwned);
+        console.log('Empresa do usuário:', response.companyOwned);
+      }
     } catch (err) {
       console.error('Erro ao buscar /me', err);
     }
@@ -96,7 +109,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   return (
     <AuthContext.Provider
-      value={{ user, login, logout, isAuthenticated: !!user }}
+      value={{ user, company, login, logout, isAuthenticated: !!user }}
     >
       {children}
     </AuthContext.Provider>

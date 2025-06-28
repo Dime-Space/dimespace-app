@@ -50,7 +50,6 @@ export const loginUser = async (email: string, password: string) => {
 
   const result = await response.json();
 
-  // 👉 Corrigido: acessando o token dentro de result.data
   const token = result.data.access_token;
 
   console.log('[loginUser] Token recebido da API:', token);
