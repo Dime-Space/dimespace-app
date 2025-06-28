@@ -14,6 +14,7 @@ interface UserProfileSheetProps {
   userName: string;
   userEmail: string;
   onLogout?: () => void;
+  onProposalClick?: () => void;
 }
 
 export default function UserProfileSheet({
@@ -22,6 +23,7 @@ export default function UserProfileSheet({
   userName,
   userEmail,
   onLogout,
+  onProposalClick,
 }: UserProfileSheetProps) {
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
@@ -48,7 +50,10 @@ export default function UserProfileSheet({
           </div>
 
           <nav className="space-y-2">
-            <button className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left">
+            <button
+              onClick={onProposalClick}
+              className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left"
+            >
               <Plus className="w-5 h-5" />
               <span>Quero fazer propostas</span>
             </button>

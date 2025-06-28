@@ -4,14 +4,17 @@ import { Input } from '@/components/ui/input';
 import UserProfileSheet from '@/components/ui/userprofilesheet';
 import LoginModal from '@/components/ui/loginModal';
 import RegisterUserModal from './registermodal/user/registerUserModal';
+import RegisterCompanyModal from './registermodal/company/registerCompanyModal';
 import { useAuth } from '@/contexts/AuthContext';
 
 export default function Navbar() {
-  const { user, logout } = useAuth();
+  const { user, company, logout } = useAuth();
 
   const [showProfileSheet, setShowProfileSheet] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showRegisterCompanyModal, setShowRegisterCompanyModal] =
+    useState(false);
 
   const handleLogout = () => {
     logout();
@@ -59,13 +62,27 @@ export default function Navbar() {
 
           {/* UserProfileSheet aberto quando usuário logado */}
           {user && (
-            <UserProfileSheet
-              open={showProfileSheet}
-              onOpenChange={setShowProfileSheet}
-              userName={user.name}
-              userEmail={user.email}
-              onLogout={handleLogout}
-            />
+            <>
+              <UserProfileSheet
+                open={showProfileSheet}
+                onOpenChange={setShowProfileSheet}
+                userName={user.name}
+                userEmail={user.email}
+                onLogout={handleLogout}
+                onProposalClick={() => {
+                  if (!company) {
+                    setShowRegisterCompanyModal(true); // abre modal de criar empresa
+                  } else {
+                    console.log('Usuário já tem empresa:', company);
+                    // aqui você pode redirecionar para propostas, abrir modal, etc
+                  }
+                }}
+              />
+              <RegisterCompanyModal
+                open={showRegisterCompanyModal}
+                onOpenChange={setShowRegisterCompanyModal}
+              />
+            </>
           )}
 
           {/* Modais Login e Registro para usuário não logado */}

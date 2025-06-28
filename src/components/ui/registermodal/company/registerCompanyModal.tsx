@@ -5,7 +5,7 @@ import { AddressDataForm } from '@/components/ui/registermodal/addressDataForm';
 import { CompanyStepData, AddressStepData } from '@/types/types';
 import { createCompany } from '@/services/company/companyService';
 import { useAuth } from '@/contexts/AuthContext';
-import LoginModal from '@/components/ui/loginModal';
+
 type AddressFull = {
   cep: string;
   state: string;
@@ -20,7 +20,7 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const CreateCompany: React.FC<Props> = ({ open, onOpenChange }) => {
+const RegisterCompanyModal: React.FC<Props> = ({ open, onOpenChange }) => {
   const [step, setStep] = useState(1);
   const [companyData, setCompanyData] = useState<CompanyStepData | null>(null);
   const { user } = useAuth();
@@ -92,4 +92,4 @@ const CreateCompany: React.FC<Props> = ({ open, onOpenChange }) => {
   );
 };
 
-export default CreateCompany;
+export default RegisterCompanyModal;

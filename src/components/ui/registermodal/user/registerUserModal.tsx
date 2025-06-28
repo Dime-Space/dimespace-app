@@ -15,7 +15,7 @@ const RegisterUserModal: React.FC<RegisterUserModalProps> = ({
   onOpenChange,
 }) => {
   const [step, setStep] = useState(1);
-  const [userData, setUserData] = useState<UserStepData | null>(null); // <-- Guardar os dados do passo 1
+  const [userData, setUserData] = useState<UserStepData | undefined>(undefined);
 
   const handleNext = (data: UserStepData) => {
     setUserData(data);
@@ -43,7 +43,9 @@ const RegisterUserModal: React.FC<RegisterUserModalProps> = ({
       <SheetContent side="right">
         <h2 className="text-lg font-bold mb-4 text-center">Crie sua conta</h2>
 
-        {step === 1 && <UserDataForm onNext={handleNext} />}
+        {step === 1 && (
+          <UserDataForm onNext={handleNext} defaultValues={userData} />
+        )}
 
         {step === 2 && (
           <>

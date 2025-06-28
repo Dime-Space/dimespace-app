@@ -7,19 +7,28 @@ import { userStepSchema } from '../../../schemas/schemas';
 import { UserStepData } from '../../../types/types';
 import { formatCPF, formatTelefone } from '@/components/formatter';
 
-interface Props {
+interface UserDataFormProps {
   onNext: (data: UserStepData) => void;
+  defaultValues?: UserStepData; // <-- Aqui
 }
 
-export const UserDataForm: React.FC<Props> = ({ onNext }) => {
+export const UserDataForm: React.FC<UserDataFormProps> = ({
+  onNext,
+  defaultValues,
+}) => {
   const {
     register,
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<UserStepData>({
+    defaultValues,
     resolver: zodResolver(userStepSchema),
   });
+
+  const cpf = watch('cpf');
+  const phone = watch('phone');
 
   return (
     <form
@@ -54,10 +63,8 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
       <Input
         placeholder="CPF"
         {...register('cpf')}
-        onChange={(e) => {
-          const value = formatCPF(e.target.value);
-          setValue('cpf', value);
-        }}
+        value={cpf}
+        onChange={(e) => setValue('cpf', formatCPF(e.target.value))}
         className="w-64"
       />
       {errors.cpf && (
@@ -67,10 +74,8 @@ export const UserDataForm: React.FC<Props> = ({ onNext }) => {
       <Input
         placeholder="Telefone"
         {...register('phone')}
-        onChange={(e) => {
-          const value = formatTelefone(e.target.value);
-          setValue('phone', value);
-        }}
+        value={phone}
+        onChange={(e) => setValue('phone', formatTelefone(e.target.value))}
         className="w-64"
       />
       {errors.phone && (
