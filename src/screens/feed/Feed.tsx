@@ -19,10 +19,10 @@ export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
-    null,
-  );
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [search, setSearch] = useState('');
 
   const openProposalDetails = (proposal: Proposal) => {
     setSelectedProposal(proposal);
@@ -38,9 +38,13 @@ export default function ProposalPlatform() {
     queryFn: getProposals,
   });
 
+  const filteredProposals = proposals?.filter((proposal: Proposal) =>
+    proposal.company?.name?.toLowerCase().startsWith(search.toLowerCase())
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
+      <Navbar search={search} setSearch={setSearch} />
 
       <div className="flex">
         <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 z-30 overflow-y-auto">
@@ -72,11 +76,11 @@ export default function ProposalPlatform() {
             {isError && (
               <p className="text-red-500">Erro ao carregar propostas.</p>
             )}
-            {proposals?.length === 0 && !isLoading && !isError && (
+            {filteredProposals?.length === 0 && !isLoading && !isError && (
               <p className="text-gray-600">Nenhuma proposta encontrada.</p>
             )}
 
-            {proposals?.map((proposal) => (
+            {filteredProposals?.map((proposal: Proposal) => (
               <ProposalCard
                 key={proposal.id}
                 title={proposal.title}
