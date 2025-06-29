@@ -27,9 +27,7 @@ const exampleOffer: JobOffer = {
   address: 'Avenida das Empresas, 1000, São Paulo - SP',
   phone: '(11) 99999-8888',
   logo: '/src/assets/images/microsoft.jpeg',
-  workPhotos: [
-    '/src/assets/images/xbox720.jpg',
-  ],
+  workPhotos: ['/src/assets/images/xbox720.jpg'],
 };
 
 const JobOffer: React.FC = () => {
@@ -37,15 +35,17 @@ const JobOffer: React.FC = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [chatMessages, setChatMessages] = useState<
     { id: number; text: string; sender: 'bot' | 'user' }[]
-  >([
-    { id: 1, text: 'Olá! Como posso ajudar?', sender: 'bot' },
-  ]);
+  >([{ id: 1, text: 'Olá! Como posso ajudar?', sender: 'bot' }]);
 
   const handleSendMessage = (message: string) => {
     setChatMessages((msgs) => [
       ...msgs,
       { id: msgs.length + 1, text: message, sender: 'user' as const },
-      { id: msgs.length + 2, text: 'Recebi sua mensagem!', sender: 'bot' as const },
+      {
+        id: msgs.length + 2,
+        text: 'Recebi sua mensagem!',
+        sender: 'bot' as const,
+      },
     ]);
   };
 
@@ -61,7 +61,9 @@ const JobOffer: React.FC = () => {
             />
           )}
           <div>
-            <CardTitle className="text-xl">{exampleOffer.companyName}</CardTitle>
+            <CardTitle className="text-xl">
+              {exampleOffer.companyName}
+            </CardTitle>
             <span className="text-lg font-semibold text-blue-600">
               R$ {exampleOffer.value.toLocaleString('pt-BR')}
             </span>
@@ -69,7 +71,9 @@ const JobOffer: React.FC = () => {
         </CardHeader>
         <CardContent>
           <div className="mb-4">
-            <span className="block text-gray-700 font-medium mb-1">Descrição:</span>
+            <span className="block text-gray-700 font-medium mb-1">
+              Descrição:
+            </span>
             <p className="text-gray-900">{exampleOffer.description}</p>
           </div>
           <div className="mb-2">
@@ -86,7 +90,9 @@ const JobOffer: React.FC = () => {
           </div>
           {exampleOffer.workPhotos && exampleOffer.workPhotos.length > 0 && (
             <div className="mb-4">
-              <span className="block text-gray-700 font-medium mb-1">Fotos do trabalho:</span>
+              <span className="block text-gray-700 font-medium mb-1">
+                Fotos do trabalho:
+              </span>
               <div className="flex gap-2 flex-wrap">
                 {exampleOffer.workPhotos.map((photo, idx) => (
                   <img
