@@ -18,7 +18,7 @@ import { createChat } from '@/services/chat/chatService';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
     null,
@@ -97,6 +97,7 @@ export default function ProposalPlatform() {
                 status={proposal.status}
                 finalDate={proposal.final_date}
                 onDetailsClick={() => openProposalDetails(proposal)}
+                companyId={proposal.company?.id}
               />
             ))}
           </div>
