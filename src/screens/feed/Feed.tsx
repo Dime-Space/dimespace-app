@@ -97,6 +97,7 @@ export default function ProposalPlatform() {
                 status={proposal.status}
                 finalDate={proposal.final_date}
                 onDetailsClick={() => openProposalDetails(proposal)}
+                companyId={proposal.company?.id}
               />
             ))}
           </div>

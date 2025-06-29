@@ -3,6 +3,7 @@ import { format, parseISO } from 'date-fns';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
 
 interface ProposalCardProps {
   title: string;
@@ -16,6 +17,7 @@ interface ProposalCardProps {
   imageUrl?: string;
   imageAlt?: string;
   onDetailsClick?: () => void;
+  companyId?: number;
 }
 
 export default function ProposalCard({
@@ -30,16 +32,29 @@ export default function ProposalCard({
   imageUrl,
   imageAlt = 'Project image',
   onDetailsClick,
+  companyId,
 }: ProposalCardProps) {
+  const navigate = useNavigate();
+
+  const handleCompanyClick = () => {
+    if (companyId) {
+      navigate(`/company-profile/${companyId}`);
+    }
+  };
+
   return (
     <Card className="overflow-hidden">
       <CardContent className="p-6 space-y-4">
         {/* Top Section */}
         <div className="flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center">
+            <div
+              onClick={handleCompanyClick}
+              className="w-10 h-10 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer hover:bg-gray-300"
+            >
               <User className="w-6 h-6 text-gray-600" />
             </div>
+            {/* Title and Author */}
             <div>
               <h3 className="font-semibold text-lg">{title}</h3>
               <p className="text-sm text-gray-600">

@@ -1,7 +1,7 @@
 // services/companyServices.ts
 
 import axios from 'axios';
-import { toast } from 'sonner';
+
 const API_URL = 'http://localhost:3001';
 
 type AddressFull = {
@@ -13,17 +13,23 @@ type AddressFull = {
   complement?: string;
 };
 
+type AddressById = {
+  id: string;
+};
+
 export const createCompany = async (companyData: {
   name: string;
   cnpj: string;
   phone: string;
-  address?: AddressFull;
+  address?: AddressFull | AddressById;
 }) => {
-  try {
-    const response = await axios.post(`${API_URL}/company`, companyData);
-    toast.success('Empresa criada com sucesso!');
-    return response.data;
-  } catch (error) {
-    toast.error('Erro ao criar empresa!');
-  }
+  const response = await axios.post(`${API_URL}/company`, companyData);
+  return response.data;
+};
+
+export const getCompanyById = async (id: number) => {
+  const response = await axios.get(`${API_URL}/company/${id}`);
+  console.log('🏢 Dados da empresa recebidos:', response.data.data);
+
+  return response.data.data;
 };

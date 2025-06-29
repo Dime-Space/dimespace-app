@@ -31,12 +31,8 @@ const router = createBrowserRouter([
   },
 
   {
-    path: '/company-profile',
-    element: (
-      <ProtectedRoute>
-        <CompanyProfile />
-      </ProtectedRoute>
-    ),
+    path: '/company-profile/:id',
+    element: <CompanyProfile />,
   },
   {
     path: '/joboffer',
