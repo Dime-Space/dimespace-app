@@ -18,7 +18,7 @@ import { createChat } from '@/services/chat/chatService';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
     null,

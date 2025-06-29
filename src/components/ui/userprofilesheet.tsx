@@ -7,6 +7,8 @@ import {
   SheetTitle,
 } from '@/components/ui/sheet';
 import { User, Plus } from 'lucide-react';
+import { useAuth } from '@/contexts/hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -25,6 +27,13 @@ export default function UserProfileSheet({
   onLogout,
   onProposalClick,
 }: UserProfileSheetProps) {
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const handleUserIconClick = () => {
+    if (user?.id) {
+      navigate(`/profile/${user.id}`);
+    }
+  };
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       {/* Removi o SheetTrigger e botão interno */}
@@ -39,7 +48,10 @@ export default function UserProfileSheet({
         <div className=" ml-8">
           <div className="border-b pb-4 mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center">
+              <div
+                className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
+                onClick={handleUserIconClick}
+              >
                 <User className="w-6 h-6 text-gray-600" />
               </div>
               <div>
