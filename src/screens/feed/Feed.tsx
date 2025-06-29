@@ -14,14 +14,16 @@ import { getProposals } from '@/services/proposals/proposalServices';
 import ProposalCardSkeleton from '@/components/ui/feed/proposalskeleton';
 import { Proposal } from '@/types/types';
 import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
+import { createChat } from '@/services/chat/chatService';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const { user, isAuthenticated } = useAuth();
 
-  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(null);
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null,
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [search, setSearch] = useState('');
 
   const openProposalDetails = (proposal: Proposal) => {
@@ -39,7 +41,7 @@ export default function ProposalPlatform() {
   });
 
   const filteredProposals = proposals?.filter((proposal: Proposal) =>
-    proposal.company?.name?.toLowerCase().startsWith(search.toLowerCase())
+    proposal.company?.name?.toLowerCase().startsWith(search.toLowerCase()),
   );
 
   return (
@@ -116,19 +118,20 @@ export default function ProposalPlatform() {
           open={isModalOpen}
           onOpenChange={setIsModalOpen}
           proposal={selectedProposal}
-          onContact={() => {
+          onContact={async () => {
             if (!selectedProposal) return;
-            console.log('Candidatura iniciada:', {
-              userId: user?.id,
-              userName: user?.name,
-              companyId: selectedProposal.company.id,
-              companyName: selectedProposal.company.name,
-              proposalId: selectedProposal.id,
-              proposalTitle: selectedProposal.title,
-            });
+
+            try {
+              const chat = await createChat(selectedProposal.company.id);
+              console.log('Chat criado com sucesso:', chat);
+              setIsChatOpen(true);
+            } catch (error) {
+              console.error('Erro ao iniciar chat:', error);
+            }
           }}
         />
       )}
+
       <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>
   );
