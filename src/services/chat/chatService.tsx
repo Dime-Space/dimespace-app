@@ -58,3 +58,12 @@ export const getChatHistory = async (chatId: number) => {
     );
   }
 };
+
+export const createChat = async (companyId: number) => {
+  try {
+    const response = await axios.post(`${API_URL}/chat`, { companyId });
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error.response?.data?.message || 'Erro ao criar chat');
+  }
+};
