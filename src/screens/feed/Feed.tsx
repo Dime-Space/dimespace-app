@@ -130,6 +130,8 @@ export default function ProposalPlatform() {
               setIsModalOpen(false);
             } catch (error) {
               console.error('Erro ao iniciar chat:', error);
+              setIsChatOpen(true);
+              setIsModalOpen(false);
               toast.error('Erro ao iniciar chat');
             }
           }}

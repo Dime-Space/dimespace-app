@@ -32,11 +32,16 @@ import {
 import axios from 'axios';
 
 interface User {
+  birthdate: string;
+  biography: string;
+  skill: string;
+  area: string;
+  phone: string;
+  cpf: string;
   id: string;
   name: string;
   email: string;
   address_id?: string;
-  // outros campos
 }
 
 interface Company {
