@@ -15,6 +15,7 @@ import ProposalCardSkeleton from '@/components/ui/feed/proposalskeleton';
 import { Proposal } from '@/types/types';
 import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
 import { createChat } from '@/services/chat/chatService';
+import { toast } from 'sonner';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -131,6 +132,7 @@ export default function ProposalPlatform() {
               console.error('Erro ao iniciar chat:', error);
               setIsChatOpen(true);
               setIsModalOpen(false);
+              toast.error('Erro ao iniciar chat');
             }
           }}
         />
