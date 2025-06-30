@@ -69,9 +69,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
       const response = await fetchUserFromAPI(); // retorna { statusCode, message, data }
       console.log('Dados do /me:', response);
       setUser(response.data); // assume que data contém o usuário
-      if (response.companyOwned != null) {
-        setCompany(response.companyOwned);
-        console.log('Empresa do usuário:', response.companyOwned);
+      if (response.data.companyOwned != null) {
+        setCompany(response.data.companyOwned);
+        console.log('Empresa do usuário:', response.data.companyOwned);
       }
     } catch (err) {
       console.error('Erro ao buscar /me', err);
