@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -9,6 +9,9 @@ import {
 import { User, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { updateUserProfile } from '@/services/user/userServices';
+import { toast } from 'sonner';
+import EditUserModal from '@/components/ui/editmodal/editUserModal';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -27,11 +30,34 @@ export default function UserProfileSheet({
   onLogout,
   onProposalClick,
 }: UserProfileSheetProps) {
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
   const { user, company } = useAuth();
   const navigate = useNavigate();
   const handleUserIconClick = () => {
     if (user?.id) {
       navigate(`/profile/${user.id}`);
+    }
+  };
+
+  const handleUserUpdate = async (formData: any) => {
+    if (!user) return;
+
+    try {
+      await updateUserProfile(user.id, {
+        name: formData.nome,
+        email: formData.email,
+        password: formData.senha,
+        cpf: formData.cpf,
+        phone: formData.telefone,
+        area: formData.area,
+        skill: formData.skill,
+      });
+
+      toast.success('Perfil atualizado com sucesso!');
+      onOpenChange(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao atualizar perfil');
     }
   };
 
@@ -88,10 +114,14 @@ export default function UserProfileSheet({
               <Plus className="w-5 h-5" />
               <span>Quero fazer propostas</span>
             </button>
-            <button className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left">
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left"
+            >
               <User className="w-5 h-5" />
               <span>Atualizar perfil</span>
             </button>
+
             <button
               onClick={onLogout}
               className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left"
@@ -99,6 +129,12 @@ export default function UserProfileSheet({
               <span>Sair</span>
             </button>
           </nav>
+
+          <EditUserModal
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            onSubmit={handleUserUpdate}
+          />
         </div>
       </SheetContent>
     </Sheet>
