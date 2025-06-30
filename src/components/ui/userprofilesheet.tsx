@@ -27,11 +27,17 @@ export default function UserProfileSheet({
   onLogout,
   onProposalClick,
 }: UserProfileSheetProps) {
-  const { user } = useAuth();
+  const { user, company } = useAuth();
   const navigate = useNavigate();
   const handleUserIconClick = () => {
     if (user?.id) {
       navigate(`/profile/${user.id}`);
+    }
+  };
+
+  const handleCompanyIconClick = () => {
+    if (company?.id) {
+      navigate(`/company-profile/${company.id}`);
     }
   };
   return (
@@ -59,6 +65,19 @@ export default function UserProfileSheet({
                 <p className="text-sm text-gray-600">{userEmail}</p>
               </div>
             </div>
+            {company && (
+              <div className="flex items-center py-4 gap-3">
+                <div
+                  className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
+                  onClick={handleCompanyIconClick}
+                >
+                  <User className="w-6 h-6 text-gray-400" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">{company.name}</h4>
+                </div>
+              </div>
+            )}
           </div>
 
           <nav className="space-y-2">
