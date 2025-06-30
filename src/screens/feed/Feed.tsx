@@ -126,8 +126,11 @@ export default function ProposalPlatform() {
               const chat = await createChat(selectedProposal.company.id);
               console.log('Chat criado com sucesso:', chat);
               setIsChatOpen(true);
+              setIsModalOpen(false);
             } catch (error) {
               console.error('Erro ao iniciar chat:', error);
+              setIsChatOpen(true);
+              setIsModalOpen(false);
             }
           }}
         />
