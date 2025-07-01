@@ -7,15 +7,16 @@ import RegisterUserModal from './registermodal/user/registerUserModal';
 import RegisterCompanyModal from './registermodal/company/registerCompanyModal';
 import { useAuth } from '@/contexts/AuthContext';
 import CreateProposalModal from '@/components/ui/createProposal';
+import { useNavigate } from 'react-router-dom';
 
 interface NavbarProps {
-  search: string;
-  setSearch: (value: string) => void;
+  search?: string;
+  setSearch?: (value: string) => void;
 }
 
 export default function Navbar({ search, setSearch }: NavbarProps) {
   const { user, company, logout } = useAuth();
-
+  const navigate = useNavigate();
   const [showProfileSheet, setShowProfileSheet] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -39,20 +40,27 @@ export default function Navbar({ search, setSearch }: NavbarProps) {
   return (
     <header className="bg-gray-800 text-white px-4 sm:px-6 py-3 w-full fixed top-0 left-0 z-40 shadow">
       <div className="flex items-center justify-between w-full min-w-0">
-        <div className="text-2xl font-bold flex-shrink-0">D</div>
+        <div
+          className="text-2xl font-bold flex-shrink-0 cursor-pointer"
+          onClick={() => navigate(`/`)}
+        >
+          D
+        </div>
 
         {/* Search - Hidden on mobile, shown on larger screens */}
-        <div className="hidden lg:flex flex-1 max-w-md mx-8">
-          <div className="relative w-full">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-            <Input
-              placeholder="Buscar empresa por nome..."
-              className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 w-full"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
+        {search !== undefined && setSearch && (
+          <div className="hidden lg:flex flex-1 max-w-md mx-8">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Buscar empresa por nome..."
+                className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 w-full"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
           {user && (
@@ -119,18 +127,19 @@ export default function Navbar({ search, setSearch }: NavbarProps) {
         }}
       />
 
-      {/* Mobile Search */}
-      <div className="lg:hidden mt-3">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          <Input
-            placeholder="Buscar empresa por nome..."
-            className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 w-full"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+      {search !== undefined && setSearch && (
+        <div className="lg:hidden mt-3">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Input
+              placeholder="Buscar empresa por nome..."
+              className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400 w-full"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
         </div>
-      </div>
+      )}
     </header>
   );
 }

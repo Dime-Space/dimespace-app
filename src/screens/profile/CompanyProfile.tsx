@@ -9,6 +9,7 @@ import SocialLink from '@/components/ui/sociallink';
 import { Button } from '@/components/ui/button';
 import PhoneIcon from '@/assets/icons/IconPhone';
 import FacebookIcon from '@/assets/icons/FacebookIcon';
+import Navbar from '@/components/ui/navbar';
 
 const CompanyProfile = () => {
   const { id } = useParams<{ id: string }>();
@@ -34,103 +35,106 @@ const CompanyProfile = () => {
   const coverImage = '/images/Corinthians.jpg';
 
   return (
-    <div className="h-full w-full bg-gray-500 flex flex-col scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 overflow-y-auto">
-      <img
-        src={coverImage}
-        alt={`Capa ${company.name}`}
-        className="w-full h-64 object-cover shrink-0 brightness-25"
-      />
+    <>
+      <div className="h-full w-full bg-gray-500 flex flex-col scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 overflow-y-auto">
+        <Navbar />
+        <img
+          src={coverImage}
+          alt={`Capa ${company.name}`}
+          className="w-full h-64 object-cover shrink-0 brightness-25"
+        />
 
-      <div className="bg-gray-800 flex flex-col lg:flex-row-reverse p-4 relative w-full h-auto lg:h-56 shadow-2xl">
-        <div className="flex justify-center lg:justify-start mt-[-85px] lg:mr-32 z-10">
-          <ProfileImage
-            className="relative"
-            name={company.name}
-            src={coverImage}
-            minSize={200}
-            maxSize={250}
-          />
+        <div className="bg-gray-800 flex flex-col lg:flex-row-reverse p-4 relative w-full h-auto lg:h-56 shadow-2xl">
+          <div className="flex justify-center lg:justify-start mt-[-85px] lg:mr-32 z-10">
+            <ProfileImage
+              className="relative"
+              name={company.name}
+              src={coverImage}
+              minSize={200}
+              maxSize={250}
+            />
+          </div>
+
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:mx-8">
+            <h1 className="text-[clamp(1.5rem,5vw,4rem)] text-white font-bold">
+              {company.name}
+            </h1>
+            <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl mt-2">
+              Serviços prestados com excelência desde{' '}
+              {new Date(company.created_at).getFullYear()}
+            </p>
+          </div>
+
+          {/* Social Links fictícios por enquanto */}
+          <div className="flex-1 flex flex-col items-center justify-center px-4 lg:px-8 mt-4 lg:mt-0">
+            <SocialLink
+              label="Facebook"
+              url="https://facebook.com"
+              className="text-gray-300"
+              icon={<FacebookIcon className="h-10 w-10 text-black" />}
+              textSize="text-sm md:text-xl"
+            />
+          </div>
         </div>
 
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:mx-8">
-          <h1 className="text-[clamp(1.5rem,5vw,4rem)] text-white font-bold">
-            {company.name}
-          </h1>
-          <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl mt-2">
-            Serviços prestados com excelência desde{' '}
-            {new Date(company.created_at).getFullYear()}
-          </p>
-        </div>
+        <div className="flex flex-row-reverse">
+          <div className="bg-gray-700 p-6 text-white h-full w-full lg:w-1/4">
+            <div className="flex flex-col space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Informações</h2>
+                <div className="space-y-3">
+                  <SocialLink
+                    label={company.phone}
+                    url={`tel:${company.phone}`}
+                    className="text-gray-300"
+                    icon={
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
+                    }
+                    textSize="text-base"
+                  />
+                  <SocialLink
+                    label={company.email ?? 'contato@empresa.com'}
+                    url={`mailto:${company.email ?? 'contato@empresa.com'}`}
+                    className="text-gray-300"
+                    icon={
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
+                    }
+                    textSize="text-base"
+                  />
+                  <div className="flex items-center gap-2">
+                    <PhoneIcon className="h-6 w-6 fill-gray-400" />
+                    <span className="text-gray-300">CNPJ: {company.cnpj}</span>
+                  </div>
+                  <SocialLink
+                    label={address}
+                    url={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
+                    className="text-gray-300"
+                    icon={
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
+                    }
+                    textSize="text-base"
+                  />
 
-        {/* Social Links fictícios por enquanto */}
-        <div className="flex-1 flex flex-col items-center justify-center px-4 lg:px-8 mt-4 lg:mt-0">
-          <SocialLink
-            label="Facebook"
-            url="https://facebook.com"
-            className="text-gray-300"
-            icon={<FacebookIcon className="h-10 w-10 text-black" />}
-            textSize="text-sm md:text-xl"
-          />
-        </div>
-      </div>
-
-      <div className="flex flex-row-reverse">
-        <div className="bg-gray-700 p-6 text-white h-full w-full lg:w-1/4">
-          <div className="flex flex-col space-y-6">
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Informações</h2>
-              <div className="space-y-3">
-                <SocialLink
-                  label={company.phone}
-                  url={`tel:${company.phone}`}
-                  className="text-gray-300"
-                  icon={
-                    <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
-                  }
-                  textSize="text-base"
-                />
-                <SocialLink
-                  label={company.email ?? 'contato@empresa.com'}
-                  url={`mailto:${company.email ?? 'contato@empresa.com'}`}
-                  className="text-gray-300"
-                  icon={
-                    <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
-                  }
-                  textSize="text-base"
-                />
-                <div className="flex items-center gap-2">
-                  <PhoneIcon className="h-6 w-6 fill-gray-400" />
-                  <span className="text-gray-300">CNPJ: {company.cnpj}</span>
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white mt-4 py-3">
+                    Visualizar Propostas
+                  </Button>
                 </div>
-                <SocialLink
-                  label={address}
-                  url={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
-                  className="text-gray-300"
-                  icon={
-                    <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
-                  }
-                  textSize="text-base"
-                />
-
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white mt-4 py-3">
-                  Visualizar Propostas
-                </Button>
               </div>
-            </div>
 
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Sobre Nós</h2>
-              <div className="bg-gray-600 p-4 rounded-lg">
-                <p className="text-gray-300">
-                  Somos uma empresa especializada em soluções tecnológicas para
-                  o futuro.
-                </p>
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Sobre Nós</h2>
+                <div className="bg-gray-600 p-4 rounded-lg">
+                  <p className="text-gray-300">
+                    Somos uma empresa especializada em soluções tecnológicas
+                    para o futuro.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -12,6 +12,7 @@ import FacebookIcon from '@/assets/icons/FacebookIcon';
 import GithubIcon from '@/assets/icons/GithubIcon';
 
 import { UserType } from '@/types/types';
+import Navbar from '@/components/ui/navbar';
 
 const UserProfile = () => {
   const { id } = useParams();
@@ -65,6 +66,7 @@ const UserProfile = () => {
 
   return (
     <div className="h-screen w-screen bg-gray-500 overflow-x-hidden flex flex-col">
+      <Navbar />
       <img
         src={user.image_key || urlImage}
         alt={user.name}
