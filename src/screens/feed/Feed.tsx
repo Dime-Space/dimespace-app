@@ -16,16 +16,19 @@ import { Proposal } from '@/types/types';
 import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
 import { createChat } from '@/services/chat/chatService';
 import { toast } from 'sonner';
+import EditProposalModal from '@/components/ui/editmodal/proposal/proposalEditModal';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, company } = useAuth();
 
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState('');
+
+  const isOwnProposal = selectedProposal?.company?.id === company?.id;
 
   const openProposalDetails = (proposal: Proposal) => {
     setSelectedProposal(proposal);
@@ -120,26 +123,38 @@ export default function ProposalPlatform() {
       )}
 
       {selectedProposal && (
-        <ProposalDetailsModal
-          open={isModalOpen}
-          onOpenChange={setIsModalOpen}
-          proposal={selectedProposal}
-          onContact={async () => {
-            if (!selectedProposal) return;
+        <>
+          {isOwnProposal ? (
+            <EditProposalModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onSuccess={() => {
+                setIsModalOpen(false);
+                // aqui você pode refazer a query ou atualizar a lista, se quiser
+              }}
+            />
+          ) : (
+            <ProposalDetailsModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onContact={async () => {
+                if (!selectedProposal) return;
 
-            try {
-              const chat = await createChat(selectedProposal.company.id);
-              console.log('Chat criado com sucesso:', chat);
-              setIsChatOpen(true);
-              setIsModalOpen(false);
-            } catch (error) {
-              console.error('Erro ao iniciar chat:', error);
-              setIsChatOpen(true);
-              setIsModalOpen(false);
-              toast.error('Erro ao iniciar chat');
-            }
-          }}
-        />
+                try {
+                  const chat = await createChat(selectedProposal.company.id);
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                } catch (error) {
+                  toast.error('Erro ao iniciar chat');
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                }
+              }}
+            />
+          )}
+        </>
       )}
 
       <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
