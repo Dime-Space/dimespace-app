@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { UserStepData, AddressStepData } from '@/types/types';
+import { useInvalidateUser } from '@/contexts/hooks/useUserQuery';
 
 const API_URL = 'http://localhost:3001';
 
@@ -45,11 +46,19 @@ export const getUserById = async (id: number) => {
   return response.data.data;
 };
 
-export const updateUserProfile = async (
-  userId: string,
-  userData: Partial<UserStepData>,
-) => {
-  return axios.patch(`${API_URL}/user/${userId}`, userData);
+export const useUpdateUserProfile = () => {
+  const invalidateUser = useInvalidateUser();
+
+  const updateUserProfile = async (
+    userId: string,
+    userData: Partial<UserStepData>,
+  ) => {
+    const response = await axios.patch(`${API_URL}/user/${userId}`, userData);
+    await invalidateUser(); // Isso fará com que os dados sejam buscados novamente
+    return response.data;
+  };
+
+  return { updateUserProfile };
 };
 
 export const updateUserAddress = async (

@@ -45,11 +45,11 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <>
-      <AuthProvider>
-        <QueryClientProvider client={queryClient}>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider>
           <RouterProvider router={router} />
-        </QueryClientProvider>
-      </AuthProvider>
+        </AuthProvider>
+      </QueryClientProvider>
       <Toaster richColors position="top-center" />
     </>
   );

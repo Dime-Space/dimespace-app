@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
 import CreateProposalModal from '@/components/ui/createProposal';
 import { UserEditData } from '@/types/types';
+import { useUpdateUserProfile } from '@/services/user/userServices';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -34,6 +35,7 @@ export default function UserProfileSheet({
 }: UserProfileSheetProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
+  const { updateUserProfile } = useUpdateUserProfile(); // Usa o hook modificado
 
   const { user, company } = useAuth();
   const navigate = useNavigate();
@@ -46,18 +48,15 @@ export default function UserProfileSheet({
   const handleUserUpdate = async (formData: UserEditData) => {
     if (!user) return;
 
-    // Cria um objeto copiando os dados do formulário
     const payload = { ...formData };
-
-    // Remove o campo de senha se estiver vazio (evita sobrescrever com string vazia)
     if (!payload.password) {
       delete payload.password;
     }
 
     try {
       await updateUserProfile(user.id, payload);
-
       toast.success('Perfil atualizado com sucesso!');
+      setIsEditModalOpen(false);
       onOpenChange(false);
     } catch (error: any) {
       toast.error(error.message || 'Erro ao atualizar perfil');
