@@ -12,6 +12,7 @@ import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '@/services/user/userServices';
 import { toast } from 'sonner';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
+import CreateProposalModal from '@/components/ui/createProposal';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -31,6 +32,7 @@ export default function UserProfileSheet({
   onProposalClick,
 }: UserProfileSheetProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
 
   const { user, company } = useAuth();
   const navigate = useNavigate();
@@ -134,6 +136,11 @@ export default function UserProfileSheet({
             open={isEditModalOpen}
             onOpenChange={setIsEditModalOpen}
             onSubmit={handleUserUpdate}
+          />
+
+          <CreateProposalModal
+            open={isCreateProposalOpen}
+            onOpenChange={setIsCreateProposalOpen}
           />
         </div>
       </SheetContent>

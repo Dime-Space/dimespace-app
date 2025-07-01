@@ -83,24 +83,28 @@ export default function ProposalPlatform() {
               <p className="text-gray-600">Nenhuma proposta encontrada.</p>
             )}
 
-            {filteredProposals?.map((proposal: Proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                title={proposal.title}
-                author={proposal.company?.name || 'Desconhecido'}
-                timeAgo={formatDistanceToNow(parseISO(proposal.created_at), {
-                  addSuffix: true,
-                  locale: ptBR,
-                })}
-                price={`R$ ${Number(proposal.value).toLocaleString('pt-BR')}`}
-                description={proposal.description}
-                skills={proposal.skill_requested}
-                status={proposal.status}
-                finalDate={proposal.final_date}
-                onDetailsClick={() => openProposalDetails(proposal)}
-                companyId={proposal.company?.id}
-              />
-            ))}
+            {filteredProposals?.map((proposal: Proposal) => {
+              console.log('Proposal:', proposal);
+
+              return (
+                <ProposalCard
+                  key={proposal.id}
+                  title={proposal.title}
+                  author={proposal.company?.name || 'Desconhecido'}
+                  timeAgo={formatDistanceToNow(parseISO(proposal.created_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
+                  price={`R$ ${Number(proposal.value).toLocaleString('pt-BR')}`}
+                  description={proposal.description}
+                  skills={proposal.skill_requested}
+                  status={proposal.status}
+                  finalDate={proposal.final_date}
+                  onDetailsClick={() => openProposalDetails(proposal)}
+                  companyId={proposal.company?.id}
+                />
+              );
+            })}
           </div>
         </main>
       </div>

@@ -36,3 +36,10 @@ export function formatCEP(value: string): string {
 
   return numeros;
 }
+
+export const formatCurrency = (value: string) => {
+  return value
+    .replace(/\D/g, '') // remove tudo que não é número
+    .replace(/^0+/, '') // remove zeros à esquerda
+    .replace(/(\d{1,})(\d{2})$/, '$1,$2'); // adiciona vírgula para centavos
+};
