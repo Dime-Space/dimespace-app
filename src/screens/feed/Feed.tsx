@@ -16,16 +16,19 @@ import { Proposal } from '@/types/types';
 import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
 import { createChat } from '@/services/chat/chatService';
 import { toast } from 'sonner';
+import EditProposalModal from '@/components/ui/editmodal/proposal/proposalEditModal';
 
 export default function ProposalPlatform() {
   const [isChatOpen, setIsChatOpen] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, company } = useAuth();
 
   const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
     null,
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [search, setSearch] = useState('');
+
+  const isOwnProposal = selectedProposal?.company?.id === company?.id;
 
   const openProposalDetails = (proposal: Proposal) => {
     setSelectedProposal(proposal);
@@ -77,24 +80,28 @@ export default function ProposalPlatform() {
               <p className="text-gray-600">Nenhuma proposta encontrada.</p>
             )}
 
-            {filteredProposals?.map((proposal: Proposal) => (
-              <ProposalCard
-                key={proposal.id}
-                title={proposal.title}
-                author={proposal.company?.name || 'Desconhecido'}
-                timeAgo={formatDistanceToNow(parseISO(proposal.created_at), {
-                  addSuffix: true,
-                  locale: ptBR,
-                })}
-                price={`R$ ${Number(proposal.value).toLocaleString('pt-BR')}`}
-                description={proposal.description}
-                skills={proposal.skill_requested}
-                status={proposal.status}
-                finalDate={proposal.final_date}
-                onDetailsClick={() => openProposalDetails(proposal)}
-                companyId={proposal.company?.id}
-              />
-            ))}
+            {filteredProposals?.map((proposal: Proposal) => {
+              console.log('Proposal:', proposal);
+
+              return (
+                <ProposalCard
+                  key={proposal.id}
+                  title={proposal.title}
+                  author={proposal.company?.name || 'Desconhecido'}
+                  timeAgo={formatDistanceToNow(parseISO(proposal.created_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
+                  price={`R$ ${Number(proposal.value).toLocaleString('pt-BR')}`}
+                  description={proposal.description}
+                  skills={proposal.skill_requested}
+                  status={proposal.status}
+                  finalDate={proposal.final_date}
+                  onDetailsClick={() => openProposalDetails(proposal)}
+                  companyId={proposal.company?.id}
+                />
+              );
+            })}
           </div>
         </main>
       </div>
@@ -110,24 +117,38 @@ export default function ProposalPlatform() {
       )}
 
       {selectedProposal && (
-        <ProposalDetailsModal
-          open={isModalOpen}
-          onOpenChange={setIsModalOpen}
-          proposal={selectedProposal}
-          onContact={async () => {
-            if (!selectedProposal) return;
+        <>
+          {isOwnProposal ? (
+            <EditProposalModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onSuccess={() => {
+                setIsModalOpen(false);
+                // aqui você pode refazer a query ou atualizar a lista, se quiser
+              }}
+            />
+          ) : (
+            <ProposalDetailsModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onContact={async () => {
+                if (!selectedProposal) return;
 
-            try {
-              const chat = await createChat(selectedProposal.company.id);
-              console.log('Chat criado com sucesso:', chat);
-              setIsChatOpen(true);
-              setIsModalOpen(false);
-            } catch (error) {
-              console.error('Erro ao iniciar chat:', error);
-              toast.error('Erro ao iniciar chat');
-            }
-          }}
-        />
+                try {
+                  const chat = await createChat(selectedProposal.company.id);
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                } catch (error) {
+                  toast.error('Erro ao iniciar chat');
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                }
+              }}
+            />
+          )}
+        </>
       )}
 
       <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />

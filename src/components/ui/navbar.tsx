@@ -6,6 +6,7 @@ import LoginModal from '@/components/ui/loginModal';
 import RegisterUserModal from './registermodal/user/registerUserModal';
 import RegisterCompanyModal from './registermodal/company/registerCompanyModal';
 import { useAuth } from '@/contexts/AuthContext';
+import CreateProposalModal from '@/components/ui/createProposal';
 
 interface NavbarProps {
   search: string;
@@ -18,6 +19,7 @@ export default function Navbar({ search, setSearch }: NavbarProps) {
   const [showProfileSheet, setShowProfileSheet] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showProposalModal, setShowProposalModal] = useState(false);
   const [showRegisterCompanyModal, setShowRegisterCompanyModal] =
     useState(false);
 
@@ -79,6 +81,7 @@ export default function Navbar({ search, setSearch }: NavbarProps) {
                     setShowRegisterCompanyModal(true);
                   } else {
                     console.log('Usuário já tem empresa:', company);
+                    setShowProposalModal(true);
                   }
                 }}
               />
@@ -107,6 +110,14 @@ export default function Navbar({ search, setSearch }: NavbarProps) {
           )}
         </div>
       </div>
+
+      <CreateProposalModal
+        open={showProposalModal}
+        onOpenChange={setShowProposalModal}
+        onSuccess={() => {
+          setShowProposalModal(false);
+        }}
+      />
 
       {/* Mobile Search */}
       <div className="lg:hidden mt-3">

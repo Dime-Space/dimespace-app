@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -9,6 +9,12 @@ import {
 import { User, Plus } from 'lucide-react';
 import { useAuth } from '@/contexts/hooks/useAuth';
 import { useNavigate } from 'react-router-dom';
+import { updateUserProfile } from '@/services/user/userServices';
+import { toast } from 'sonner';
+import EditUserModal from '@/components/ui/editmodal/editUserModal';
+import CreateProposalModal from '@/components/ui/createProposal';
+import { UserEditData } from '@/types/types';
+import { useUpdateUserProfile } from '@/services/user/userServices';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -27,11 +33,39 @@ export default function UserProfileSheet({
   onLogout,
   onProposalClick,
 }: UserProfileSheetProps) {
-  const { user } = useAuth();
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
+  const { updateUserProfile } = useUpdateUserProfile(); // Usa o hook modificado
+
+  const { user, company } = useAuth();
   const navigate = useNavigate();
   const handleUserIconClick = () => {
     if (user?.id) {
       navigate(`/profile/${user.id}`);
+    }
+  };
+
+  const handleUserUpdate = async (formData: UserEditData) => {
+    if (!user) return;
+
+    const payload = { ...formData };
+    if (!payload.password) {
+      delete payload.password;
+    }
+
+    try {
+      await updateUserProfile(user.id, payload);
+      toast.success('Perfil atualizado com sucesso!');
+      setIsEditModalOpen(false);
+      onOpenChange(false);
+    } catch (error: any) {
+      toast.error(error.message || 'Erro ao atualizar perfil');
+    }
+  };
+
+  const handleCompanyIconClick = () => {
+    if (company?.id) {
+      navigate(`/company-profile/${company.id}`);
     }
   };
   return (
@@ -59,6 +93,19 @@ export default function UserProfileSheet({
                 <p className="text-sm text-gray-600">{userEmail}</p>
               </div>
             </div>
+            {company && (
+              <div className="flex items-center py-4 gap-3">
+                <div
+                  className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center cursor-pointer"
+                  onClick={handleCompanyIconClick}
+                >
+                  <User className="w-6 h-6 text-gray-400" />
+                </div>
+                <div>
+                  <h4 className="font-semibold">{company.name}</h4>
+                </div>
+              </div>
+            )}
           </div>
 
           <nav className="space-y-2">
@@ -69,10 +116,14 @@ export default function UserProfileSheet({
               <Plus className="w-5 h-5" />
               <span>Quero fazer propostas</span>
             </button>
-            <button className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left">
+            <button
+              onClick={() => setIsEditModalOpen(true)}
+              className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left"
+            >
               <User className="w-5 h-5" />
               <span>Atualizar perfil</span>
             </button>
+
             <button
               onClick={onLogout}
               className="flex items-center gap-3 p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer w-full text-left"
@@ -80,6 +131,17 @@ export default function UserProfileSheet({
               <span>Sair</span>
             </button>
           </nav>
+
+          <EditUserModal
+            open={isEditModalOpen}
+            onOpenChange={setIsEditModalOpen}
+            onSubmit={handleUserUpdate}
+          />
+
+          <CreateProposalModal
+            open={isCreateProposalOpen}
+            onOpenChange={setIsCreateProposalOpen}
+          />
         </div>
       </SheetContent>
     </Sheet>

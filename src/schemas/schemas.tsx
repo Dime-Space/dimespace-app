@@ -24,6 +24,34 @@ export const userStepSchema = z.object({
   birthdate: z.string().min(8, 'Data de nascimento é obrigatória'),
 });
 
+export const userEditSchema = z.object({
+  name: z.string().min(3, 'Nome deve ter pelo menos 3 caracteres'),
+  email: z.string().email('Email inválido'),
+  password: z
+    .string()
+    .optional()
+    .refine((val) => !val || val.length >= 6, {
+      message: 'Senha deve ter pelo menos 6 caracteres',
+    }),
+  cpf: z
+    .string()
+    .transform((val) => val.replace(/\D/g, ''))
+    .refine((val) => val.length === 11, {
+      message: 'CPF deve conter 11 dígitos',
+    })
+    .refine((val) => validarCPF(val), { message: 'CPF inválido' }),
+  phone: z
+    .string()
+    .transform((val) => val.replace(/\D/g, ''))
+    .refine((val) => val.length >= 10 && val.length <= 11, {
+      message: 'Telefone deve conter entre 10 e 11 dígitos',
+    }),
+  area: z.string().min(2, 'Área de atuação inválida'),
+  skill: z.string().nonempty('Selecione uma experiência'),
+  biography: z.string().optional(),
+  birthdate: z.string().min(8, 'Data de nascimento é obrigatória'),
+});
+
 export const companyStepSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   cnpj: z.string().min(1, 'CNPJ é obrigatório'),

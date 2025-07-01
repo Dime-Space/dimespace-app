@@ -1,9 +1,10 @@
 import { z } from 'zod';
-import { userStepSchema, addressStepSchema, companyStepSchema } from '../schemas/schemas';
+import { userStepSchema, addressStepSchema, companyStepSchema, userEditSchema } from '../schemas/schemas';
 
 export type UserStepData = z.infer<typeof userStepSchema>;
 export type AddressStepData = z.infer<typeof addressStepSchema>;
 export type CompanyStepData = z.infer<typeof companyStepSchema>;
+export type UserEditData = z.infer<typeof userEditSchema>;
 
 export type UserType = {
   id: number;
