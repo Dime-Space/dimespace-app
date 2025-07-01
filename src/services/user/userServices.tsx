@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { UserStepData, AddressStepData } from '@/types/types';
+import { useInvalidateUser } from '@/contexts/hooks/useUserQuery';
 
 const API_URL = 'http://localhost:3001';
 
@@ -45,16 +46,24 @@ export const getUserById = async (id: number) => {
   return response.data.data;
 };
 
-export const updateUserProfile = async (
-  userId: string,
-  userData: Partial<UserStepData>,
-) => {
-  try {
-    const response = await axios.put(`${API_URL}/user/${userId}`, userData);
+export const useUpdateUserProfile = () => {
+  const invalidateUser = useInvalidateUser();
+
+  const updateUserProfile = async (
+    userId: string,
+    userData: Partial<UserStepData>,
+  ) => {
+    const response = await axios.patch(`${API_URL}/user/${userId}`, userData);
+    await invalidateUser(); // Isso fará com que os dados sejam buscados novamente
     return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || 'Erro ao atualizar o perfil do usuário',
-    );
-  }
+  };
+
+  return { updateUserProfile };
+};
+
+export const updateUserAddress = async (
+  userId: string,
+  addressData: Partial<UpdateAddressDTO>,
+) => {
+  return axios.patch(`${API_URL}/user/${userId}/address`, addressData);
 };

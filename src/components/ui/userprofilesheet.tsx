@@ -12,6 +12,9 @@ import { useNavigate } from 'react-router-dom';
 import { updateUserProfile } from '@/services/user/userServices';
 import { toast } from 'sonner';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
+import CreateProposalModal from '@/components/ui/createProposal';
+import { UserEditData } from '@/types/types';
+import { useUpdateUserProfile } from '@/services/user/userServices';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -31,6 +34,8 @@ export default function UserProfileSheet({
   onProposalClick,
 }: UserProfileSheetProps) {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
+  const { updateUserProfile } = useUpdateUserProfile(); // Usa o hook modificado
 
   const { user, company } = useAuth();
   const navigate = useNavigate();
@@ -40,21 +45,18 @@ export default function UserProfileSheet({
     }
   };
 
-  const handleUserUpdate = async (formData: any) => {
+  const handleUserUpdate = async (formData: UserEditData) => {
     if (!user) return;
 
-    try {
-      await updateUserProfile(user.id, {
-        name: formData.nome,
-        email: formData.email,
-        password: formData.senha,
-        cpf: formData.cpf,
-        phone: formData.telefone,
-        area: formData.area,
-        skill: formData.skill,
-      });
+    const payload = { ...formData };
+    if (!payload.password) {
+      delete payload.password;
+    }
 
+    try {
+      await updateUserProfile(user.id, payload);
       toast.success('Perfil atualizado com sucesso!');
+      setIsEditModalOpen(false);
       onOpenChange(false);
     } catch (error: any) {
       toast.error(error.message || 'Erro ao atualizar perfil');
@@ -134,6 +136,11 @@ export default function UserProfileSheet({
             open={isEditModalOpen}
             onOpenChange={setIsEditModalOpen}
             onSubmit={handleUserUpdate}
+          />
+
+          <CreateProposalModal
+            open={isCreateProposalOpen}
+            onOpenChange={setIsCreateProposalOpen}
           />
         </div>
       </SheetContent>

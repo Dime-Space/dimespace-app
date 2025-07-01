@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -9,13 +9,13 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/contexts/hooks/useAuth';
-import { createProposal } from '@/services/proposals/proposalServices';
 import { z } from 'zod';
+import { Proposal } from '@/types/types';
+import { updateProposal } from '@/services/proposals/proposalServices';
 import { formatCurrency } from '@/components/formatter';
+import { useUpdateProposal } from '@/services/proposals/proposalServices';
 
 const proposalSchema = z.object({
-  company_id: z.number().optional(),
   title: z.string().min(3, 'Título muito curto'),
   description: z.string().min(10, 'Descrição muito curta'),
   value: z.string().regex(/^\d+(\.\d{1,2})?$/, 'Valor inválido'),
@@ -25,57 +25,82 @@ const proposalSchema = z.object({
       const inputDate = new Date(date);
       return inputDate > now;
     },
-    {
-      message: 'Data final deve ser futura',
-    },
+    { message: 'Data final deve ser futura' },
   ),
   skill_requested: z
     .array(z.string().min(2, 'Skill muito curta'))
     .min(1, 'Adicione ao menos uma skill'),
-
   status: z.enum(['aberto', 'fechado'], {
     errorMap: () => ({ message: 'Status deve ser "aberto" ou "fechado"' }),
   }),
 });
 
-interface CreateProposalModalProps {
+interface EditProposalModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onSuccess?: () => void; // Opcional: callback para atualizar lista após criar
+  proposal: Proposal;
+  onSuccess?: () => void;
 }
 
-export interface ProposalFormData {
-  company_id: number | undefined;
-  title: string;
-  description: string;
-  value: string;
-  final_date: string;
-  skill_requested: string[];
-  status: string;
-}
-
-const CreateProposalModal: React.FC<CreateProposalModalProps> = ({
+const EditProposalModal: React.FC<EditProposalModalProps> = ({
   open,
   onOpenChange,
+  proposal,
   onSuccess,
 }) => {
-  const { user, company } = useAuth();
-
-  console.log('Dados do usuário:', user);
-  console.log('Dados da empresa:', company);
-
-  const [form, setForm] = useState<ProposalFormData>({
-    company_id: company?.id ? Number(company.id) : undefined,
+  const [form, setForm] = useState({
     title: '',
     description: '',
     value: '',
     final_date: '',
-    skill_requested: [],
-    status: '',
+    skill_requested: [] as string[],
+    status: 'aberto',
   });
+
+  const { mutateAsync } = useUpdateProposal();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (proposal) {
+      let parsedSkills: string[] = [];
+
+      try {
+        if (Array.isArray(proposal.skill_requested)) {
+          parsedSkills = proposal.skill_requested;
+        } else if (typeof proposal.skill_requested === 'string') {
+          // Tenta fazer JSON.parse
+          try {
+            const json = JSON.parse(proposal.skill_requested);
+            if (Array.isArray(json)) {
+              parsedSkills = json;
+            } else if (typeof json === 'string') {
+              parsedSkills = [json];
+            }
+          } catch {
+            // fallback: split por vírgula
+            parsedSkills = proposal.skill_requested
+              .split(',')
+              .map((s) => s.trim());
+          }
+        }
+      } catch (err) {
+        console.warn('Erro ao processar skill_requested:', err);
+      }
+
+      setForm({
+        title: proposal.title,
+        description: proposal.description,
+        value: Number(proposal.value).toLocaleString('pt-BR', {
+          minimumFractionDigits: 2,
+        }),
+        final_date: proposal.final_date.split('T')[0],
+        skill_requested: parsedSkills,
+        status: proposal.status,
+      });
+    }
+  }, [proposal]);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -85,80 +110,51 @@ const CreateProposalModal: React.FC<CreateProposalModalProps> = ({
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === 'value' ? formatCurrency(value) : value,
     }));
-    if (name === 'value') {
-      const formatted = formatCurrency(value);
-      setForm((prev) => ({
-        ...prev,
-        [name]: formatted,
-      }));
-      return;
-    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError(null);
+    setLoading(true);
 
-    // Converte valor formatado para número string válido (ex: "1.234,56" → "1234.56")
-    const rawValue = form.value
-      .replace(/\./g, '') // remove pontos dos milhares
-      .replace(',', '.'); // troca vírgula decimal por ponto
+    const rawValue = form.value.replace(/\./g, '').replace(',', '.');
 
-    const parsedForm = {
+    const parsed = proposalSchema.safeParse({
       ...form,
       value: rawValue,
-    };
+    });
 
-    const result = proposalSchema.safeParse(parsedForm);
-
-    if (!result.success) {
-      const errorMessage = result.error.issues[0].message;
-      setError(errorMessage);
+    if (!parsed.success) {
+      setError(parsed.error.issues[0].message);
       setLoading(false);
       return;
     }
 
-    const submissionData = {
-      ...result.data,
-      skill_requested: result.data.skill_requested.join(', '),
-    };
-
     try {
-      await createProposal(submissionData);
-      onSuccess?.();
-      onOpenChange(false);
-      setForm({
-        company_id: company?.id ? Number(company.id) : undefined,
-        title: '',
-        description: '',
-        value: '',
-        final_date: '',
-        skill_requested: [],
-        status: 'aberto',
+      await mutateAsync({
+        id: proposal.id,
+        data: {
+          ...parsed.data,
+          skill_requested: parsed.data.skill_requested.join(', '),
+        },
       });
-    } catch (err: any) {
-      setError('Erro ao criar proposta. Tente novamente.');
+      onOpenChange(false);
+      onSuccess?.();
+    } catch (err) {
+      console.error(err);
+      setError('Erro ao atualizar proposta');
     } finally {
       setLoading(false);
     }
   };
 
-  // Atualiza o company_id caso mude o contexto
-  React.useEffect(() => {
-    setForm((prev) => ({
-      ...prev,
-      company_id: company?.id ? Number(company.id) : undefined,
-    }));
-  }, [company]);
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Criar Proposta de Serviço</DialogTitle>
+          <DialogTitle>Editar Proposta</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -255,16 +251,16 @@ const CreateProposalModal: React.FC<CreateProposalModalProps> = ({
               className="w-full border border-input rounded-md px-3 py-2 text-sm"
               required
             >
-              <option value="">Selecione</option>
               <option value="aberto">Aberto</option>
               <option value="fechado">Fechado</option>
             </select>
           </div>
 
           {error && <div className="text-red-500 text-sm">{error}</div>}
+
           <DialogFooter>
             <Button type="submit" disabled={loading}>
-              {loading ? 'Criando...' : 'Criar Proposta'}
+              {loading ? 'Salvando...' : 'Salvar Alterações'}
             </Button>
           </DialogFooter>
         </form>
@@ -273,4 +269,4 @@ const CreateProposalModal: React.FC<CreateProposalModalProps> = ({
   );
 };
 
-export default CreateProposalModal;
+export default EditProposalModal;
