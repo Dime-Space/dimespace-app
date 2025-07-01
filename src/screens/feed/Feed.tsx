@@ -51,12 +51,6 @@ export default function ProposalPlatform() {
 
       <div className="flex">
         <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 z-30 overflow-y-auto">
-          <nav className="space-y-2">
-            <SidebarItem icon={<Clock />} label="Histórico de propostas" />
-            <SidebarItem icon={<Settings />} label="Configurações" />
-            <SidebarItem icon={<FileText />} label="Fazer proposta" />
-          </nav>
-
           <div className="mt-8 hidden md:block">
             <Card className="bg-gradient-to-br from-blue-900 to-blue-700 text-white">
               <CardContent className="p-4 text-center">
