@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 import BaseEditModal from './baseEditModal';
 import { useAuth } from '@/contexts/hooks/useAuth';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { userStepSchema } from '@/schemas/schemas';
-import { UserStepData } from '@/types/types';
+import { userEditSchema } from '@/schemas/schemas';
+import { UserEditData } from '@/types/types';
 import { formatCPF, formatTelefone } from '@/components/formatter';
 
 interface Props {
@@ -27,7 +27,7 @@ const EditUserModal: React.FC<Props> = ({ open, onOpenChange, onSubmit }) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm<UserStepData>({
+  } = useForm<UserEditData>({
     defaultValues: {
       name: '',
       email: '',
@@ -39,7 +39,7 @@ const EditUserModal: React.FC<Props> = ({ open, onOpenChange, onSubmit }) => {
       birthdate: '',
       skill: '',
     },
-    resolver: zodResolver(userStepSchema),
+    resolver: zodResolver(userEditSchema),
   });
 
   // Atualiza os valores do form quando o modal abrir ou o usuário mudar

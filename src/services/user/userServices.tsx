@@ -49,12 +49,12 @@ export const updateUserProfile = async (
   userId: string,
   userData: Partial<UserStepData>,
 ) => {
-  try {
-    const response = await axios.put(`${API_URL}/user/${userId}`, userData);
-    return response.data;
-  } catch (error: any) {
-    throw new Error(
-      error.response?.data?.message || 'Erro ao atualizar o perfil do usuário',
-    );
-  }
+  return axios.patch(`${API_URL}/user/${userId}`, userData);
+};
+
+export const updateUserAddress = async (
+  userId: string,
+  addressData: Partial<UpdateAddressDTO>,
+) => {
+  return axios.patch(`${API_URL}/user/${userId}/address`, addressData);
 };

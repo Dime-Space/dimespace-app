@@ -13,6 +13,7 @@ import { updateUserProfile } from '@/services/user/userServices';
 import { toast } from 'sonner';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
 import CreateProposalModal from '@/components/ui/createProposal';
+import { UserEditData } from '@/types/types';
 
 interface UserProfileSheetProps {
   open: boolean;
@@ -42,19 +43,19 @@ export default function UserProfileSheet({
     }
   };
 
-  const handleUserUpdate = async (formData: any) => {
+  const handleUserUpdate = async (formData: UserEditData) => {
     if (!user) return;
 
+    // Cria um objeto copiando os dados do formulário
+    const payload = { ...formData };
+
+    // Remove o campo de senha se estiver vazio (evita sobrescrever com string vazia)
+    if (!payload.password) {
+      delete payload.password;
+    }
+
     try {
-      await updateUserProfile(user.id, {
-        name: formData.nome,
-        email: formData.email,
-        password: formData.senha,
-        cpf: formData.cpf,
-        phone: formData.telefone,
-        area: formData.area,
-        skill: formData.skill,
-      });
+      await updateUserProfile(user.id, payload);
 
       toast.success('Perfil atualizado com sucesso!');
       onOpenChange(false);
