@@ -14,10 +14,18 @@ import GithubIcon from '@/assets/icons/GithubIcon';
 import { UserType } from '@/types/types';
 import Navbar from '@/components/ui/navbar';
 
+import { useAuth } from '@/contexts/hooks/useAuth';
+import ChatModal from '@/components/ui/chatModal';
+import { MessageCircleIcon } from 'lucide-react';
+
 const UserProfile = () => {
+  const { isAuthenticated } = useAuth();
+
   const { id } = useParams();
   const [user, setUser] = useState<UserType | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -84,6 +92,18 @@ const UserProfile = () => {
             maxSize={250}
           />
         </div>
+
+        {isAuthenticated && (
+          <Button
+            className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg"
+            variant="default"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <MessageCircleIcon className="w-6 h-6" />
+          </Button>
+        )}
+
+        <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
 
         {/* Container que agrupa nome + contato */}
         <div className="flex flex-col lg:flex-row px-4 w-full">

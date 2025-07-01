@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -10,10 +10,16 @@ import { Button } from '@/components/ui/button';
 import PhoneIcon from '@/assets/icons/IconPhone';
 import FacebookIcon from '@/assets/icons/FacebookIcon';
 import Navbar from '@/components/ui/navbar';
+import { MessageCircleIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/hooks/useAuth';
+import ChatModal from '@/components/ui/chatModal';
 
 const CompanyProfile = () => {
+  const { isAuthenticated } = useAuth();
   const { id } = useParams<{ id: string }>();
   const companyId = Number(id);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const {
     data: company,
@@ -38,6 +44,18 @@ const CompanyProfile = () => {
     <>
       <div className="h-full w-full bg-gray-500 flex flex-col scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 overflow-y-auto">
         <Navbar />
+        {isAuthenticated && (
+          <Button
+            className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg"
+            variant="default"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <MessageCircleIcon className="w-6 h-6" />
+          </Button>
+        )}
+
+        <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
+
         <img
           src={coverImage}
           alt={`Capa ${company.name}`}
