@@ -1,128 +1,175 @@
-'use client';
-
 import { useState } from 'react';
-import { Clock, Settings, FileText, MessageCircle, X } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { Clock, Settings, FileText, MessageCircleIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+
 import Navbar from '@/components/ui/navbar';
 import ProposalCard from '@/components/ui/feed/proposalcard';
+import ChatModal from '@/components/ui/chatModal';
+import { useAuth } from '@/contexts/hooks/useAuth';
+import { getProposals } from '@/services/proposals/proposalServices';
+import ProposalCardSkeleton from '@/components/ui/feed/proposalskeleton';
+import { Proposal } from '@/types/types';
+import ProposalDetailsModal from '@/components/ui/feed/proposaldetailsmodal';
+import { createChat } from '@/services/chat/chatService';
+import { toast } from 'sonner';
+import EditProposalModal from '@/components/ui/editmodal/proposal/proposalEditModal';
 
 export default function ProposalPlatform() {
-  const [showChat, setShowChat] = useState(true);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const { isAuthenticated, company } = useAuth();
+
+  const [selectedProposal, setSelectedProposal] = useState<Proposal | null>(
+    null,
+  );
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const isOwnProposal = selectedProposal?.company?.id === company?.id;
+
+  const openProposalDetails = (proposal: Proposal) => {
+    setSelectedProposal(proposal);
+    setIsModalOpen(true);
+  };
+
+  const {
+    data: proposals,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['proposals'],
+    queryFn: getProposals,
+  });
+
+  const filteredProposals = proposals?.filter((proposal: Proposal) =>
+    proposal.company?.name?.toLowerCase().startsWith(search.toLowerCase()),
+  );
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Navbar Component */}
-      <Navbar
-        balance="R$ 100,00"
-        cartCount={6}
-        userName="Usuário da silva"
-        userEmail="user@gmail.com"
-      />
+      <Navbar search={search} setSearch={setSearch} />
 
       <div className="flex">
-        {/* Left Sidebar */}
-        <aside className="relative w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 transition-all duration-300">
-          <nav className="space-y-2">
-            <div className="flex items-center gap-3 justify-center md:justify-start p-2 md:p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer group">
-              <Clock className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden md:block">Histórico de propostas</span>
-              <div className="md:hidden absolute left-20 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                Histórico de propostas
-              </div>
-            </div>
-            <div className="flex items-center gap-3 justify-center md:justify-start p-2 md:p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer group">
-              <Settings className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden md:block">Configurações</span>
-              <div className="md:hidden absolute left-20 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                Configurações
-              </div>
-            </div>
-            <div className="flex items-center gap-3 justify-center md:justify-start p-2 md:p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer group">
-              <FileText className="w-5 h-5 flex-shrink-0" />
-              <span className="hidden md:block">Fazer proposta</span>
-              <div className="md:hidden absolute left-20 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
-                Fazer proposta
-              </div>
-            </div>
-          </nav>
-
-          {/* Sporting Bet Ad - Hidden on smaller screens, shown on md and larger */}
+        <aside className="fixed top-16 left-0 h-[calc(100vh-4rem)] w-16 md:w-64 bg-white shadow-sm p-2 md:p-4 z-30 overflow-y-auto">
           <div className="mt-8 hidden md:block">
-            <Card className="bg-gradient-to-br from-blue-900 to-blue-700 text-white overflow-hidden">
-              <CardContent className="p-4">
-                <div className="text-center">
-                  <div className="text-lg font-bold mb-2">sporting bet</div>
-                  <div className="text-sm opacity-90">Apostas esportivas</div>
-                </div>
+            <Card className="bg-gradient-to-br from-blue-900 to-blue-700 text-white">
+              <CardContent className="p-4 text-center">
+                <div className="text-lg font-bold mb-2">sporting bet</div>
+                <div className="text-sm opacity-90">Apostas esportivas</div>
               </CardContent>
             </Card>
           </div>
         </aside>
 
-        {/* Main Content */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-6 mt-16 ml-16 md:ml-64">
           <div className="max-w-4xl mx-auto space-y-6">
-            {/* First Proposal - With Image */}
-            <ProposalCard
-              title="Prefeitura de Taubaté"
-              author="Responsável da Silva"
-              timeAgo="26h"
-              price="R$ 1.040,00"
-              description="Quero um programa que faz tal da silva e que faz também um café da silva onde o café da silva vai até roma e volta de avião com o Cristiano Ronaldo Lorem Ipsum;"
-              imageUrl="/placeholder.svg?height=256&width=600"
-              imageAlt="Uber project"
-            />
+            {isLoading && (
+              <>
+                {[...Array(3)].map((_, idx) => (
+                  <ProposalCardSkeleton key={idx} />
+                ))}
+              </>
+            )}
+            {isError && (
+              <p className="text-red-500">Erro ao carregar propostas.</p>
+            )}
+            {filteredProposals?.length === 0 && !isLoading && !isError && (
+              <p className="text-gray-600">Nenhuma proposta encontrada.</p>
+            )}
 
-            {/* Second Proposal - Without Image */}
-            <ProposalCard
-              title="Prefeitura de Taubaté"
-              author="Responsável da Silva"
-              timeAgo="26h"
-              price="R$ 1.040,00"
-              description="Quero um programa que faz tal da silva e que faz também um café da silva onde o café da silva vai até roma e volta de avião com o Cristiano Ronaldo Lorem Ipsum."
-            />
+            {filteredProposals?.map((proposal: Proposal) => {
+              console.log('Proposal:', proposal);
 
-            {/* Third Proposal - With Image */}
-            <ProposalCard
-              title="Empresa de Tecnologia"
-              author="João Santos"
-              timeAgo="2h"
-              price="R$ 2.500,00"
-              description="Desenvolvimento de aplicativo mobile para delivery de comida com integração de pagamento e GPS."
-              imageUrl="/placeholder.svg?height=256&width=600"
-              imageAlt="Mobile app project"
-            />
+              return (
+                <ProposalCard
+                  key={proposal.id}
+                  title={proposal.title}
+                  author={proposal.company?.name || 'Desconhecido'}
+                  timeAgo={formatDistanceToNow(parseISO(proposal.created_at), {
+                    addSuffix: true,
+                    locale: ptBR,
+                  })}
+                  price={`R$ ${Number(proposal.value).toLocaleString('pt-BR')}`}
+                  description={proposal.description}
+                  skills={proposal.skill_requested}
+                  status={proposal.status}
+                  finalDate={proposal.final_date}
+                  onDetailsClick={() => openProposalDetails(proposal)}
+                  companyId={proposal.company?.id}
+                />
+              );
+            })}
           </div>
         </main>
       </div>
 
-      {/* Chat Popup */}
-      {showChat && (
-        <div className="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg border">
-          <div className="flex items-center justify-between p-4 border-b">
-            <div className="flex items-center gap-2">
-              <MessageCircle className="w-5 h-5" />
-              <span className="font-semibold">Empresa</span>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowChat(false)}
-            >
-              <X className="w-4 h-4" />
-            </Button>
-          </div>
-          <div className="p-4">
-            <p className="text-sm text-gray-600 mb-3">
-              Quanto a tal assunto e se nós...
-            </p>
-            <Button size="sm" className="bg-gray-800 hover:bg-gray-900">
-              Responder
-            </Button>
-          </div>
-        </div>
+      {isAuthenticated && (
+        <Button
+          className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg"
+          variant="default"
+          onClick={() => setIsChatOpen(true)}
+        >
+          <MessageCircleIcon className="w-6 h-6" />
+        </Button>
       )}
+
+      {selectedProposal && (
+        <>
+          {isOwnProposal ? (
+            <EditProposalModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onSuccess={() => {
+                setIsModalOpen(false);
+                // aqui você pode refazer a query ou atualizar a lista, se quiser
+              }}
+            />
+          ) : (
+            <ProposalDetailsModal
+              open={isModalOpen}
+              onOpenChange={setIsModalOpen}
+              proposal={selectedProposal}
+              onContact={async () => {
+                if (!selectedProposal) return;
+
+                try {
+                  const chat = await createChat(selectedProposal.company.id);
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                } catch (error) {
+                  toast.error('Erro ao iniciar chat');
+                  setIsChatOpen(true);
+                  setIsModalOpen(false);
+                }
+              }}
+            />
+          )}
+        </>
+      )}
+
+      <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
+    </div>
+  );
+}
+
+function SidebarItem({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="flex items-center gap-3 justify-center md:justify-start p-2 md:p-3 text-gray-700 hover:bg-gray-100 rounded-lg cursor-pointer group relative">
+      <div className="w-5 h-5 flex-shrink-0">{icon}</div>
+      <span className="hidden md:block">{label}</span>
+      <div className="md:hidden absolute left-20 bg-gray-800 text-white px-2 py-1 rounded text-sm opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">
+        {label}
+      </div>
     </div>
   );
 }

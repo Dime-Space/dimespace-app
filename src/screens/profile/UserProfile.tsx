@@ -1,20 +1,83 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+
 import { ProfileImage } from '@/components/ui/profileimage';
 import SocialLink from '@/components/ui/sociallink';
 import { Button } from '@/components/ui/button';
+import { useParams } from 'react-router-dom';
+import { getUserById } from '@/services/user/userServices';
 
 import PhoneIcon from '@/assets/icons/IconPhone';
 import StarIcon from '@/assets/icons/StarIcon';
 import FacebookIcon from '@/assets/icons/FacebookIcon';
 import GithubIcon from '@/assets/icons/GithubIcon';
+
+import { UserType } from '@/types/types';
+import Navbar from '@/components/ui/navbar';
+
+import { useAuth } from '@/contexts/hooks/useAuth';
+import ChatModal from '@/components/ui/chatModal';
+import { MessageCircleIcon } from 'lucide-react';
+
 const UserProfile = () => {
+  const { isAuthenticated } = useAuth();
+
+  const { id } = useParams();
+  const [user, setUser] = useState<UserType | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  useEffect(() => {
+    const loadUser = async () => {
+      try {
+        if (!id) return;
+        const userData = await getUserById(Number(id));
+        setUser(userData);
+      } catch (error) {
+        console.error('Erro ao buscar usuário:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUser();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p className="text-white">Carregando...</p>
+      </div>
+    );
+  }
+
+  if (!user) return <p>Usuário não encontrado.</p>;
+
+  // const user = {
+  //   name: 'Falm',
+  //   email: 'daniel@gmail.com',
+  //   phone: '32131231231',
+  //   area: 'Materiais de Construção',
+  //   skill: 'Júnior',
+  //   biography: 'Faço tijolo',
+  //   address: {
+  //     city: 'Campo Mourão',
+  //     state: 'PR',
+  //     street: 'Rua Eugênio Zalewski',
+  //     number: '312',
+  //     complement: 'Perto dali',
+  //   },
+  //   image: '/images/yuri.png', // mock
+  // };
+
   const urlImage = '/images/yuri.png';
 
   return (
     <div className="h-screen w-screen bg-gray-500 overflow-x-hidden flex flex-col">
+      <Navbar />
       <img
-        src={urlImage}
-        alt="Yuri Alberto"
+        src={user.image_key || urlImage}
+        alt={user.name}
         className="w-full h-64 object-cover shrink-0 brightness-25"
       />
 
@@ -23,22 +86,34 @@ const UserProfile = () => {
         <div className="flex justify-center lg:justify-start mt-[-85px] lg:ml-32 z-10">
           <ProfileImage
             className="relative"
-            name="Yuri Alberto"
+            name={user.name}
             src={urlImage}
             minSize={200}
             maxSize={250}
           />
         </div>
 
+        {isAuthenticated && (
+          <Button
+            className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg"
+            variant="default"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <MessageCircleIcon className="w-6 h-6" />
+          </Button>
+        )}
+
+        <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
+
         {/* Container que agrupa nome + contato */}
         <div className="flex flex-col lg:flex-row px-4 w-full">
           {/* Texto do nome e status, com margin-left zerada no lg */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:mx-8">
             <h1 className="text-[clamp(1.5rem,5vw,4rem)] text-white font-bold">
-              Yuri Alberto
+              {user.name}
             </h1>
             <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl mt-2">
-              Desenvolvedor Front-end
+              {user.skill} - {user.area}
             </p>
           </div>
 
@@ -72,22 +147,22 @@ const UserProfile = () => {
             <h2 className="text-2xl font-bold mb-4">Contato</h2>
             <div className="space-y-3">
               <SocialLink
-                label="(11) 99999-9999"
+                label={user.phone}
                 className="text-gray-300 hover:text-white"
                 icon={
                   <PhoneIcon className="h-7 w-7 text-black fill-current hover:fill-blue-700 hover:stroke-blue-900 transition-colors" />
                 }
-                url="tel:+5511999999999"
+                url={`tel:${user.phone}`}
                 textSize="text-base"
               />
 
               <SocialLink
-                label="yuri@exemplo.com"
+                label={user.email}
                 className="text-gray-300 hover:text-white"
                 icon={
                   <PhoneIcon className="h-7 w-7 text-black fill-current hover:fill-blue-500 hover:stroke-blue-700 transition-colors" />
                 }
-                url="mailto:yuri@exemplo.com"
+                url={`mailto:${user.email}`}
                 textSize="text-base"
               />
 

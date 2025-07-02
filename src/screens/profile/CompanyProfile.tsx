@@ -1,157 +1,158 @@
-import React from 'react';
+import React, { useState } from 'react';
+
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getCompanyById } from '@/services/company/companyService';
+
 import { ProfileImage } from '@/components/ui/profileimage';
 import SocialLink from '@/components/ui/sociallink';
 import { Button } from '@/components/ui/button';
 import PhoneIcon from '@/assets/icons/IconPhone';
 import FacebookIcon from '@/assets/icons/FacebookIcon';
+import Navbar from '@/components/ui/navbar';
+import { MessageCircleIcon } from 'lucide-react';
+import { useAuth } from '@/contexts/hooks/useAuth';
+import ChatModal from '@/components/ui/chatModal';
 
 const CompanyProfile = () => {
+  const { isAuthenticated } = useAuth();
+  const { id } = useParams<{ id: string }>();
+  const companyId = Number(id);
+
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  const {
+    data: company,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ['company', companyId],
+    queryFn: () => getCompanyById(companyId),
+    enabled: !!companyId,
+  });
+
+  if (isLoading) return <div>Carregando...</div>;
+  if (isError || !company) return <div>Erro ao carregar empresa.</div>;
+
+  const address = company.address
+    ? `${company.address.street}, ${company.address.number} - ${company.address.city}, ${company.address.state}`
+    : 'Endereço não informado';
+
   const coverImage = '/images/Corinthians.jpg';
-  const profileImage = '/images/Corinthians.jpg';
-  const companyName = 'Corinthians';
-  const description = 'Serviços futebolísticos de qualidade há mais de 2 anos.';
-  const socialLinks = [
-    {
-      label: 'Facebook',
-      url: 'https://facebook.com',
-      icon: <FacebookIcon className="h-10 w-10 text-black" />,
-    },
-    {
-      label: 'Twitter',
-      url: 'https://twitter.com',
-      icon: <PhoneIcon className="h-10 w-10 text-gray-400" />,
-    },
-  ];
-  const contactInfo = {
-    phone: '(11) 99999-9999',
-    email: 'contato@corinthians.com',
-    cnpj: '00.000.000/0001-00',
-    address: 'Rua Exemplo, 123 - São Paulo, SP',
-  };
-  const about = {
-    description:
-      'Somos uma empresa especializada em Corinthians. Somos uma empresa especializada em Corinthians. Somos uma empresa especializada em Corinthians. Somos uma empresa especializada em Corinthians. Somos uma empresa especializada em Corinthians. Somos uma empresa especializada em Corinthians.',
-  };
-  const proposalsButtonText = 'Visualizar Propostas';
+
   return (
-    <div className="h-full w-full bg-gray-500 flex flex-col scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 overflow-y-auto">
-      <img
-        src={coverImage}
-        alt={`Capa ${companyName}`}
-        className="w-full h-64 object-cover shrink-0 brightness-25"
-      />
-
-      <div className="bg-gray-800 flex flex-col lg:flex-row-reverse p-4 relative w-full h-auto lg:h-56 shadow-2xl">
-        {/* Profile Image Section */}
-        <div className="flex justify-center lg:justify-start mt-[-85px] lg:mr-32 z-10">
-          <ProfileImage
-            className="relative"
-            name={companyName}
-            src={profileImage}
-            minSize={200}
-            maxSize={250}
-          />
-        </div>
-
-        {/* Company Info Section */}
-        <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:mx-8">
-          <h1 className="text-[clamp(1.5rem,5vw,4rem)] text-white font-bold">
-            {companyName}
-          </h1>
-          <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl mt-2">
-            {description}
-          </p>
-        </div>
-
-        {/* Social Links Section */}
-        {socialLinks.length > 0 && (
-          <div className="flex-1 flex flex-col items-center justify-center px-4 lg:px-8 mt-4 lg:mt-0">
-            {socialLinks.map((link, index) => (
-              <SocialLink
-                key={index}
-                label={link.label}
-                url={link.url}
-                className="text-gray-300"
-                icon={link.icon} // passa o ícone já estilizado aqui
-                textSize="text-sm md:text-xl"
-              />
-            ))}
-          </div>
+    <>
+      <div className="h-full w-full bg-gray-500 flex flex-col scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 overflow-y-auto">
+        <Navbar />
+        {isAuthenticated && (
+          <Button
+            className="fixed bottom-6 right-6 z-50 w-12 h-12 shadow-lg"
+            variant="default"
+            onClick={() => setIsChatOpen(true)}
+          >
+            <MessageCircleIcon className="w-6 h-6" />
+          </Button>
         )}
-      </div>
 
-      {/* Contact and About Section */}
-      <div className="flex flex-row-reverse">
-        <div className="bg-gray-700 p-6 text-white h-full w-full lg:w-1/4">
-          <div className="flex flex-col space-y-6">
-            {/* Contact Information */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Informações</h2>
-              <div className="space-y-3">
-                {contactInfo.phone && (
+        <ChatModal open={isChatOpen} onOpenChange={setIsChatOpen} />
+
+        <img
+          src={coverImage}
+          alt={`Capa ${company.name}`}
+          className="w-full h-64 object-cover shrink-0 brightness-25"
+        />
+
+        <div className="bg-gray-800 flex flex-col lg:flex-row-reverse p-4 relative w-full h-auto lg:h-56 shadow-2xl">
+          <div className="flex justify-center lg:justify-start mt-[-85px] lg:mr-32 z-10">
+            <ProfileImage
+              className="relative"
+              name={company.name}
+              src={coverImage}
+              minSize={200}
+              maxSize={250}
+            />
+          </div>
+
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left lg:mx-8">
+            <h1 className="text-[clamp(1.5rem,5vw,4rem)] text-white font-bold">
+              {company.name}
+            </h1>
+            <p className="text-gray-300 text-xl md:text-2xl lg:text-3xl mt-2">
+              Serviços prestados com excelência desde{' '}
+              {new Date(company.created_at).getFullYear()}
+            </p>
+          </div>
+
+          {/* Social Links fictícios por enquanto */}
+          <div className="flex-1 flex flex-col items-center justify-center px-4 lg:px-8 mt-4 lg:mt-0">
+            <SocialLink
+              label="Facebook"
+              url="https://facebook.com"
+              className="text-gray-300"
+              icon={<FacebookIcon className="h-10 w-10 text-black" />}
+              textSize="text-sm md:text-xl"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-row-reverse">
+          <div className="bg-gray-700 p-6 text-white h-full w-full lg:w-1/4">
+            <div className="flex flex-col space-y-6">
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Informações</h2>
+                <div className="space-y-3">
                   <SocialLink
-                    label={contactInfo.phone}
-                    className="text-gray-300 hover:text-white"
+                    label={company.phone}
+                    url={`tel:${company.phone}`}
+                    className="text-gray-300"
                     icon={
-                      <PhoneIcon className="fill-gray-400 stroke-gray-500 hover:fill-green-500 transition-colors h-6 w-6" />
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
                     }
-                    url={`tel:${contactInfo.phone}`}
                     textSize="text-base"
                   />
-                )}
-
-                {contactInfo.email && (
                   <SocialLink
-                    label={contactInfo.email}
-                    className="text-gray-300 hover:text-white"
+                    label={company.email ?? 'contato@empresa.com'}
+                    url={`mailto:${company.email ?? 'contato@empresa.com'}`}
+                    className="text-gray-300"
                     icon={
-                      <PhoneIcon className="fill-gray-400 stroke-gray-500 hover:fill-green-500 transition-colors h-6 w-6" />
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
                     }
-                    url={`mailto:${contactInfo.email}`}
                     textSize="text-base"
                   />
-                )}
-
-                {contactInfo.cnpj && (
                   <div className="flex items-center gap-2">
                     <PhoneIcon className="h-6 w-6 fill-gray-400" />
-                    <span className="text-gray-300">
-                      CNPJ: {contactInfo.cnpj}
-                    </span>
+                    <span className="text-gray-300">CNPJ: {company.cnpj}</span>
                   </div>
-                )}
-
-                {contactInfo.address && (
                   <SocialLink
-                    label={contactInfo.address}
-                    className="text-gray-300 hover:text-white"
+                    label={address}
+                    url={`https://maps.google.com/?q=${encodeURIComponent(address)}`}
+                    className="text-gray-300"
                     icon={
-                      <PhoneIcon className="fill-gray-400 stroke-gray-500 hover:fill-green-500 transition-colors h-6 w-6" />
+                      <PhoneIcon className="h-6 w-6 fill-gray-400 stroke-gray-500" />
                     }
-                    url={`https://maps.google.com/?q=${encodeURIComponent(contactInfo.address)}`}
                     textSize="text-base"
                   />
-                )}
 
-                <Button className="w-full bg-green-600 hover:bg-green-700 text-white mt-4 py-3">
-                  {proposalsButtonText}
-                </Button>
+                  <Button className="w-full bg-green-600 hover:bg-green-700 text-white mt-4 py-3">
+                    Visualizar Propostas
+                  </Button>
+                </div>
               </div>
-            </div>
 
-            {/* About Section */}
-            <div>
-              <h2 className="text-2xl font-bold mb-4">Sobre Nós</h2>
-              <div className="bg-gray-600 p-4 rounded-lg">
-                <p className="text-gray-300 md:max-h-12 overflow-y-auto scrollbar-thin">
-                  {about.description}
-                </p>
+              <div>
+                <h2 className="text-2xl font-bold mb-4">Sobre Nós</h2>
+                <div className="bg-gray-600 p-4 rounded-lg">
+                  <p className="text-gray-300">
+                    Somos uma empresa especializada em soluções tecnológicas
+                    para o futuro.
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

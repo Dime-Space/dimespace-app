@@ -7,11 +7,12 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import LoginModal from '@/components/ui/loginModal';
-import RegisterModal from '@/components/ui/registermodal/registerModal';
-import CreateCompany from '@/components/ui/createCompany';
+import RegisterUserModal from '@/components/ui/registermodal/user/registerUserModal';
+import RegisterCompanyModal from '@/components/ui/registermodal/company/registerCompanyModal';
 import ChatModal from '@/components/ui/chatModal';
 import EditUserModal from '@/components/ui/editmodal/editUserModal';
 import EditCompanyModal from '@/components/ui/editmodal/editCompanyModal';
+import CreateProposalModal from '@/components/ui/createProposal';
 
 const Components = () => {
   const [isSheetOpen, setIsSheetOpen] = useState(false);
@@ -21,19 +22,22 @@ const Components = () => {
   const [showUserModal, setShowUserModal] = useState(false);
   const [showCompanyModal, setShowCompanyModal] = useState(false);
 
-
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [chatMessages, setChatMessages] = useState<
     { id: number; text: string; sender: 'bot' | 'user' }[]
-  >([
-    { id: 1, text: 'Olá! Como posso ajudar?', sender: 'bot' },
-  ]);
+  >([{ id: 1, text: 'Olá! Como posso ajudar?', sender: 'bot' }]);
+
+  const [isCreateProposalOpen, setIsCreateProposalOpen] = useState(false);
 
   const handleSendMessage = (message: string) => {
     setChatMessages((msgs) => [
       ...msgs,
       { id: msgs.length + 1, text: message, sender: 'user' as const },
-      { id: msgs.length + 2, text: 'Recebi sua mensagem!', sender: 'bot' as const },
+      {
+        id: msgs.length + 2,
+        text: 'Recebi sua mensagem!',
+        sender: 'bot' as const,
+      },
     ]);
   };
 
@@ -46,7 +50,11 @@ const Components = () => {
           </CardHeader>
           <CardContent>
             <p className="text-sm text-gray-600">Quickly create a job.</p>
-            <Button className="mt-4 w-full" variant="default">
+            <Button
+              className="mt-4 w-full"
+              variant="default"
+              onClick={() => setIsCreateProposalOpen(true)}
+            >
               Create
             </Button>
           </CardContent>
@@ -121,7 +129,6 @@ const Components = () => {
         Editar empresa
       </Button>
 
-      {}
       <Button
         className="fixed bottom-6 left-6 z-50 shadow-lg"
         variant="default"
@@ -130,7 +137,6 @@ const Components = () => {
         Abrir Chat
       </Button>
 
-  
       <ChatModal
         open={isChatOpen}
         onOpenChange={setIsChatOpen}
@@ -146,8 +152,14 @@ const Components = () => {
           setIsRegisterOpen(true);
         }}
       />
-      <RegisterModal open={isRegisterOpen} onOpenChange={setIsRegisterOpen} />
-      <CreateCompany open={isCompanyOpen} onOpenChange={setIsCompanyOpen} />
+      <RegisterUserModal
+        open={isRegisterOpen}
+        onOpenChange={setIsRegisterOpen}
+      />
+      <RegisterCompanyModal
+        open={isCompanyOpen}
+        onOpenChange={setIsCompanyOpen}
+      />
       <EditUserModal
         open={showUserModal}
         onOpenChange={setShowUserModal}
@@ -165,6 +177,15 @@ const Components = () => {
           setShowCompanyModal(false);
         }}
       />
+
+    <CreateProposalModal
+      open={isCreateProposalOpen}
+      onOpenChange={setIsCreateProposalOpen}
+      onSubmit={(data) => {
+        console.log('Proposal data:', data);
+        setIsCreateProposalOpen(false);
+      }}
+    />
     </div>
   );
 };
